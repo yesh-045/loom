@@ -27,10 +27,6 @@ export default function AIChatMessages({ messages, setMessages }: AIChatMessages
   return (
     <ScrollArea className="flex-grow w-full p-0 md:p-2 space-y-4">
       {messages.map((message, index) => {
-        if (message.content && Array.isArray(message.content) && message.content.length > 0 && 'type' in message.content[0] && message.content[0].type === "image_url") {
-          return null;
-        }
-
         return (
           <div
             key={index}

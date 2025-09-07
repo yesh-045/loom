@@ -218,8 +218,8 @@ function convertMessagesToGeminiFormat(messages: ChatMessage[]) {
     parts: [{
       text: typeof msg.content === 'string' ? msg.content : 
         Array.isArray(msg.content) ? msg.content.map(c => {
-          if (c.type === 'text') return c.text || '';
-          if (c.type === 'image_url') return `[Image: ${c.image_url?.url || 'unknown'}]`;
+          if (c.type === 'text') return (c ).text || '';
+          if (c.type === 'image') return `[Image: ${(c ).imageUrl || 'unknown'}]`;
           return '';
         }).join(' ') : String(msg.content)
     }]
@@ -276,7 +276,6 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
       const functionName = functionCall.name;
       const functionArgs = functionCall.args;
       
-      // Map function names to content types
       // Map function names to content types (use AIResponse['contentType'] so the values match the declared union type)
       const functionContentTypes: Record<string, AIResponse['contentType']> = {
         'create_quiz': 'quiz',
@@ -286,7 +285,6 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
         'draw_canvas': 'canvas',
         'upload_image': 'image',
         'create_physics_simulator': 'physics',
-        'generate_text_to_speech': 'speech'
       };
       
       const contentType = functionContentTypes[functionName];

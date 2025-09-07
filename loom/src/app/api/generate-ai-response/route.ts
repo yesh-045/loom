@@ -18,19 +18,21 @@ export async function POST(request: NextRequest) {
       if (response.contentType) {
         return NextResponse.json(response, { status: 200 });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If Gemini fails, fallback to AIML
-      console.log('Gemini failed, falling back to AIML...', error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.log('Gemini failed, falling back to AIML...', errorMessage);
       
       try {
-        response = await getAIMLResponse(messages as any);
+        response = await getAIMLResponse(messages);
         
         // If AIML returns a function call, return it directly
         if (response.contentType) {
           return NextResponse.json(response, { status: 200 });
         }
-      } catch (aimlError: any) {
-        console.log('AIML also failed:', aimlError.message);
+      } catch (aimlError: unknown) {
+        const aimlErrorMessage = aimlError instanceof Error ? aimlError.message : 'Unknown error';
+        console.log('AIML also failed:', aimlErrorMessage);
         
         // Final fallback - return a helpful message
         response = { 

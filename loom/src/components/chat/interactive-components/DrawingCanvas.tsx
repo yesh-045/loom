@@ -108,10 +108,8 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ setMessages }) => {
           role: "user",
           content: [
             {
-              type: "image_url",
-              image_url: {
-                url: imageUrl
-              }
+              type: "image",
+              imageUrl: imageUrl
             }
           ]
         }

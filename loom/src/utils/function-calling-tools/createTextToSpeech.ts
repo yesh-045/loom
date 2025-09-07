@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const createTextToSpeech: GeminiTool = {
+const createTextToSpeech: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "generate_text_to_speech",

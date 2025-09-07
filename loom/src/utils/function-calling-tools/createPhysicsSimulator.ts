@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const createPhysicsSimulator: GeminiTool = {
+const createPhysicsSimulator: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "run_physics_simulation",

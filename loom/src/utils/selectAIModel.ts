@@ -5,6 +5,5 @@ export default function selectAIModel(messageInput: ChatMessage[]): "gemini" {
       throw new Error("Message input array is empty");
   }
 
-  // Using only Gemini now since we removed OpenAI
   return "gemini";
 }

@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const imageUpload: GeminiTool = {
+const imageUpload: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "image_upload",

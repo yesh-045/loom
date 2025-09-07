@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const createQuiz : GeminiTool = {
+const createQuiz: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "create_quiz",

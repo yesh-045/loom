@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const createPptSlides : GeminiTool = {
+const createPptSlides: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "create_ppt_slides",

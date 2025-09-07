@@ -39,10 +39,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
         role: "user",
         content: [
           {
-            type: "image_url",
-            image_url: {
-              url: imageUrl
-            }
+            type: "image",
+            imageUrl: imageUrl
           }
         ]
       };

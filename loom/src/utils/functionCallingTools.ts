@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
+
 import createQuizTool from "./function-calling-tools/createQuiz";
 import createPptTool from "./function-calling-tools/createPptSlides";
 import createFlashcardsTool from "./function-calling-tools/createFlashcards";
@@ -9,7 +17,7 @@ import imageUploadTool from "./function-calling-tools/imageUpload";
 import createPhysicsSimulatorTool from "./function-calling-tools/createPhysicsSimulator";
 import createTextToSpeech from "./function-calling-tools/createTextToSpeech";
 
-const functionCallingTools: GeminiTool[] = [
+const functionCallingTools: OpenAIFunctionTool[] = [
   createQuizTool,
   createPptTool,
   createFlashcardsTool,

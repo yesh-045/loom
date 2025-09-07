@@ -217,7 +217,7 @@ function convertMessagesToAIMLFormat(messages: ChatMessage[]) {
   return messages.map(msg => ({
     role: msg.role === 'system' ? 'system' : msg.role === 'user' ? 'user' : 'assistant',
     content: typeof msg.content === 'string' ? msg.content : 
-      Array.isArray(msg.content) ? msg.content.map((c: any) => {
+      Array.isArray(msg.content) ? msg.content.map((c: { type: string; text?: string; image_url?: { url?: string } }) => {
         if (c.type === 'text') return c.text || '';
         if (c.type === 'image_url' && c.image_url) return `[Image: ${c.image_url.url || 'unknown'}]`;
         return '';

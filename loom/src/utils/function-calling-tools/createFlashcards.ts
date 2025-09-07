@@ -1,6 +1,13 @@
-import { GeminiTool } from "@/lib/geminiTypes";
+interface OpenAIFunctionTool {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
 
-const createFlashcards: GeminiTool = {
+const createFlashcards: OpenAIFunctionTool = {
   type: "function",
   function: {
     name: "create_flashcards",
@@ -8,27 +15,27 @@ const createFlashcards: GeminiTool = {
     parameters: {
       type: "object",
       properties: {
-        flashcards: {
-          type: "array",
-          description: "An array of flashcards, each with a term and its definition.",
-          items: {
-            type: "object",
-            properties: {
-              term: {
-                type: "string",
-                description: "The term or concept on the flashcard.",
+          flashcards: {
+            type: "array",
+            description: "An array of flashcards, each with a term and its definition.",
+            items: {
+              type: "object",
+              properties: {
+                term: {
+                  type: "string",
+                  description: "The term or concept on the flashcard.",
+                },
+                definition: {
+                  type: "string",
+                  description: "The definition or explanation of the term. Do not include or give hints what the term is.",
+                },
               },
-              definition: {
-                type: "string",
-                description: "The definition or explanation of the term. Do not include or give hints what the term is.",
-              },
+              required: ["term", "definition"],
+              additionalProperties: false,
             },
-            required: ["term", "definition"],
-            additionalProperties: false,
+            minItems: 1,
           },
-          minItems: 1,
         },
-      },
       required: ["flashcards"],
       additionalProperties: false,
     },
