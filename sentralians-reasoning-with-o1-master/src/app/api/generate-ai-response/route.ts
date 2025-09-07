@@ -1,0 +1,48 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { ChatMessage, AIResponse } from "@/lib/types";
+import { getGeminiResponse } from '@/utils/getGeminiResponse';
+import { getAIMLResponse } from '@/utils/getAIMLResponse';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const messages: ChatMessage[] = body.messages;
+
+    let response: AIResponse;
+    
+    try {
+      // Try Gemini first with OpenAI-style function calling
+      response = await getGeminiResponse(messages, 'gemini-2.0-flash-exp');
+      
+      // If Gemini returns a function call, return it directly
+      if (response.contentType) {
+        return NextResponse.json(response, { status: 200 });
+      }
+    } catch (error: any) {
+      // If Gemini fails, fallback to AIML
+      console.log('Gemini failed, falling back to AIML...', error.message);
+      
+      try {
+        response = await getAIMLResponse(messages as any);
+        
+        // If AIML returns a function call, return it directly
+        if (response.contentType) {
+          return NextResponse.json(response, { status: 200 });
+        }
+      } catch (aimlError: any) {
+        console.log('AIML also failed:', aimlError.message);
+        
+        // Final fallback - return a helpful message
+        response = { 
+          content: "⚠️ AI services are temporarily unavailable. Please check your API keys:\n\n• Gemini: Quota exceeded (50 requests/day limit)\n• AIML: Invalid API key (403 Forbidden)\n\nPlease update your API keys in the .env file and restart the server." 
+        };
+      }
+    }
+
+    // Return regular text response
+    return NextResponse.json({ content: response.content } as AIResponse, { status: 200 });
+  } catch (error) {
+    console.error("Error generating AI response:", error);
+    return NextResponse.json({ error: 'Failed to generate AI response' }, { status: 500 });
+  }
+}
