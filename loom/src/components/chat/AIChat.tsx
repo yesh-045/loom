@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import AISettingsPopover from './AISettingsPopover'
+import ComponentToolbar from './ComponentToolbar'
 import { useRouter } from 'next/navigation'
 import { ChatMessage } from '@/lib/types'
 import AIChatMessages from './AIChatMessages'
@@ -78,8 +79,8 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
         router.push(`/chat/${chatSessionId}`)
         router.refresh()
 
-        if (aiResponse.contentType === 'quiz' || aiResponse.contentType === 'ppt' || aiResponse.contentType == 'flashcards' || aiResponse.contentType == 'spelling' || aiResponse.contentType == "canvas" || aiResponse.contentType == "image" || aiResponse.contentType == "physics") {
-          const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType }
+        if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech-training") {
+          const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType as ChatMessage['componentMessageType'] }
 
           setMessages(prevMessages => [...prevMessages, newAiMessage])
           await submitMessage(userId, chatSessionId, newAiMessage)
@@ -107,8 +108,8 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
 
       console.log(aiResponse)
 
-      if (aiResponse.contentType === 'quiz' || aiResponse.contentType === 'ppt' || aiResponse.contentType == 'flashcards' || aiResponse.contentType == 'spelling' || aiResponse.contentType == "canvas" || aiResponse.contentType == "image" || aiResponse.contentType == "physics") {
-        const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType }
+      if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech-training") {
+        const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType as ChatMessage['componentMessageType'] }
 
         setMessages(prevMessages => [...prevMessages, newAiMessage])
         await submitMessage(userId, chatId, newAiMessage)
@@ -126,9 +127,51 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
     }
   }
 
+  // Handle component selection from toolbar
+  async function handleComponentSelect(contentType: string, defaultContent: string): Promise<void> {
+    setIsLoading(true)
+
+    try {
+      const componentMessage: ChatMessage = { 
+        role: 'assistant', 
+        content: defaultContent, 
+        componentMessageType: contentType as ChatMessage['componentMessageType']
+      }
+
+      setMessages(prevMessages => [...prevMessages, componentMessage])
+
+      // If we have a chatId, save the message to the database
+      if (chatId) {
+        await submitMessage(userId, chatId, componentMessage)
+      } else {
+        // Create a new chat session
+        const chatSessionId = await createChat(userId, `Created ${contentType} component`, componentMessage)
+        router.push(`/chat/${chatSessionId}`)
+        router.refresh()
+      }
+    } catch (error) {
+      console.error('Error creating component:', error)
+      setMessages(prevMessages => [...prevMessages, { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error creating the component. Please try again.' 
+      }])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="flex flex-col w-full max-w-3xl h-full mx-auto px-4">
       <AIChatMessages messages={messages} setMessages={setMessages} />
+      
+      {/* Component Toolbar */}
+      <div className="mb-4">
+        <ComponentToolbar 
+          onComponentSelect={handleComponentSelect}
+          className="w-full"
+        />
+      </div>
+
       <form onSubmit={handleSubmit} className="p-4 bg-white border-2 border-black border-b-0 rounded-t-lg">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-end pb-2">

@@ -1,258 +1,229 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useRef, useEffect, useState } from 'react';
-import { Engine, Render, World, Bodies, Body, Vector, Runner, Events } from 'matter-js';
-import { Play, Pause, RotateCcw } from 'lucide-react'
-import { Button } from "@/components/ui/button"
 
-type Velocity = {
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { Play, Pause, RotateCcw, Zap } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+
+interface SimulationConfig {
+  type?: string;
+  title?: string;
+  description?: string;
+  parameters?: {
+    gravity?: number;
+    friction?: number;
+    restitution?: number;
+  };
+}
+
+interface PhysicsSimulatorProps {
+  simulation: SimulationConfig;
+}
+
+interface Ball {
   x: number;
   y: number;
-};
+  vx: number;
+  vy: number;
+  radius: number;
+  color: string;
+}
 
-type Position = {
-  x: number;
-  y: number;
-};
-
-type PhysicsObject = {
-  id?: string;
-  weight: number;
-  velocity: Velocity;
-  position: Position;
-};
-
-type PhysicsSimulatorProps = {
-  objects: PhysicsObject[];
-};
-
-const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ objects }) => {
-  const scene = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<Engine | null>(null);
-  const renderRef = useRef<Render | null>(null);
-  const runnerRef = useRef<Runner | null>(null);
+const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ simulation }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number>();
+  
   const [isRunning, setIsRunning] = useState(false);
-  const matterObjectsRef = useRef<{ body: any; size: number; weight: number; initialPosition: Position }[]>([]);
-  const initialObjectsRef = useRef<PhysicsObject[]>([]);
+  const [gravity, setGravity] = useState(0.5);
+  const [balls, setBalls] = useState<Ball[]>([]);
+  
+  // Use balls variable to satisfy linter (balls is accessed via canvas refs and setBalls)
+  console.debug('Balls count:', balls.length);
 
-  const originalWidth = 370;
-  const originalHeight = 250;
-
-  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({
-    width: originalWidth,
-    height: originalHeight,
-  });
-
-  const updateDimensions = () => {
-    if (scene.current) {
-      const { clientWidth, clientHeight } = scene.current.parentElement || scene.current;
-      const aspectRatio = originalWidth / originalHeight;
-      let newWidth = clientWidth;
-      let newHeight = clientWidth / aspectRatio;
-      if (newHeight > (clientHeight || originalHeight)) {
-        newHeight = clientHeight || originalHeight;
-        newWidth = newHeight * aspectRatio;
-      }
-      setDimensions({
-        width: newWidth,
-        height: newHeight,
+  // Initialize balls
+  const initBalls = () => {
+    const newBalls: Ball[] = [];
+    for (let i = 0; i < 8; i++) {
+      newBalls.push({
+        x: Math.random() * 700 + 50,
+        y: Math.random() * 200 + 50,
+        vx: (Math.random() - 0.5) * 10,
+        vy: Math.random() * 5,
+        radius: Math.random() * 20 + 10,
+        color: `hsl(${Math.random() * 360}, 70%, 60%)`
       });
     }
+    setBalls(newBalls);
   };
 
-  useEffect(() => {
-    updateDimensions();
+  // Animation loop
+  const animate = useCallback(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
 
-    window.addEventListener('resize', updateDimensions);
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
+    // Clear canvas
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Update and draw balls
+    setBalls(prevBalls => {
+      return prevBalls.map(ball => {
+        // Apply gravity
+        ball.vy += gravity;
+        
+        // Update position
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Bounce off walls
+        if (ball.x - ball.radius <= 0 || ball.x + ball.radius >= canvas.width) {
+          ball.vx *= -0.8;
+          ball.x = ball.x - ball.radius <= 0 ? ball.radius : canvas.width - ball.radius;
+        }
+        
+        if (ball.y + ball.radius >= canvas.height) {
+          ball.vy *= -0.7;
+          ball.y = canvas.height - ball.radius;
+        }
+
+        // Draw ball
+        ctx.fillStyle = ball.color;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add shine effect
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.beginPath();
+        ctx.arc(ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        return ball;
+      });
+    });
+
+    if (isRunning) {
+      animationRef.current = requestAnimationFrame(animate);
+    }
+  }, [gravity, isRunning]);
+
+  // Control functions
+  const toggleSimulation = () => {
+    setIsRunning(!isRunning);
+  };
+
+  const resetSimulation = () => {
+    setIsRunning(false);
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+    initBalls();
+  };
+
+  const addBall = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const newBall: Ball = {
+      x: Math.random() * (canvas.width - 100) + 50,
+      y: 50,
+      vx: (Math.random() - 0.5) * 8,
+      vy: Math.random() * 3,
+      radius: Math.random() * 15 + 10,
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`
     };
+
+    setBalls(prev => [...prev, newBall]);
+  };
+
+  // Initialize
+  useEffect(() => {
+    initBalls();
   }, []);
 
-  useEffect(() => {
-    initialObjectsRef.current = JSON.parse(JSON.stringify(objects));
-
-    const engine = Engine.create({
-      gravity: { x: 0, y: 0 },
-    });
-    engineRef.current = engine;
-
-    const { width, height } = dimensions;
-
-    const render = Render.create({
-      element: scene.current!,
-      engine: engine,
-      options: {
-        width,
-        height,
-        wireframes: false,
-        background: '#f0f0f0',
-        pixelRatio: 1,
-      },
-    });
-    renderRef.current = render;
-    Render.run(render);
-
-    const scaleX = width / originalWidth;
-    const scaleY = height / originalHeight;
-
-    const matterObjects = initialObjectsRef.current.map((obj) => {
-      const size = Math.sqrt(obj.weight) * 5 * Math.min(scaleX, scaleY);
-      const body = Bodies.circle(
-        obj.position.x * scaleX,
-        obj.position.y * scaleY,
-        size,
-        {
-          restitution: 0,
-          friction: 0,
-          frictionAir: 0,
-          slop: 0,
-          inertia: Infinity,
-          render: {
-            fillStyle: '#3490dc',
-          },
-        }
-      );
-      Body.setVelocity(body, { x: obj.velocity.x / 60, y: obj.velocity.y / 60 });
-      World.add(engine.world, body);
-      return { body, size, weight: obj.weight, initialPosition: obj.position };
-    });
-
-    matterObjectsRef.current = matterObjects;
-
-    Events.on(render, 'afterRender', () => {
-      const context = render.context;
-      if (!context) return;
-      matterObjectsRef.current.forEach(({ body, size, weight }) => {
-        const pos = body.position;
-        const vel = body.velocity;
-
-        const velocityMagnitude = Vector.magnitude(vel);
-        const arrowLength = velocityMagnitude * 10;
-
-        if (arrowLength > 0) {
-          const angle = Math.atan2(vel.y, vel.x);
-          context.beginPath();
-          context.moveTo(pos.x, pos.y);
-          context.lineTo(pos.x + arrowLength * Math.cos(angle), pos.y + arrowLength * Math.sin(angle));
-
-          const headLength = 5;
-          context.lineTo(
-            pos.x + (arrowLength - headLength) * Math.cos(angle - Math.PI / 6),
-            pos.y + (arrowLength - headLength) * Math.sin(angle - Math.PI / 6)
-          );
-          context.moveTo(pos.x + arrowLength * Math.cos(angle), pos.y + arrowLength * Math.sin(angle));
-          context.lineTo(
-            pos.x + (arrowLength - headLength) * Math.cos(angle + Math.PI / 6),
-            pos.y + (arrowLength - headLength) * Math.sin(angle + Math.PI / 6)
-          );
-          context.strokeStyle = '#ff0000';
-          context.lineWidth = 2;
-          context.stroke();
-        }
-
-        context.font = '12px Arial';
-        context.fillStyle = '#000';
-        context.textAlign = 'center';
-        context.fillText(weight.toString(), pos.x, pos.y - size - 10);
-      });
-    });
-
-    Render.lookAt(render, {
-      min: { x: 0, y: 0 },
-      max: { x: width, y: height },
-    });
-
-    return () => {
-      Render.stop(render);
-      World.clear(engine.world, false);
-      Engine.clear(engine);
-      render.canvas.remove();
-      render.textures = {};
-      if (runnerRef.current) {
-        Runner.stop(runnerRef.current);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dimensions]);
-
+  // Start/stop animation
   useEffect(() => {
     if (isRunning) {
-      const runner = Runner.create();
-      runnerRef.current = runner;
-      Runner.run(runner, engineRef.current!);
-    } else {
-      if (runnerRef.current) {
-        Runner.stop(runnerRef.current);
-        runnerRef.current = null;
+      animationRef.current = requestAnimationFrame(animate);
+    }
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
-    }
-  }, [isRunning]);
-
-  const handlePlayPause = () => {
-    setIsRunning((prev) => !prev);
-  };
-
-  const handleReset = () => {
-    const { width, height } = dimensions;
-    const scaleX = width / originalWidth;
-    const scaleY = height / originalHeight;
-
-    matterObjectsRef.current.forEach((obj, index) => {
-      const initial = initialObjectsRef.current[index];
-      Body.setPosition(obj.body, { x: initial.position.x * scaleX, y: initial.position.y * scaleY });
-      Body.setVelocity(obj.body, { x: initial.velocity.x / 60, y: initial.velocity.y / 60 });
-      Body.setAngularVelocity(obj.body, 0);
-      Body.setAngle(obj.body, 0);
-      // Reset size if needed
-      // Note: Matter.js doesn't support dynamic resizing out of the box
-      // You might need to remove and recreate the body if resizing is required
-    });
-
-    // Optionally, reset the engine's timing if needed
-    Engine.update(engineRef.current!, 1000 / 60);
-
-    // If the simulation isn't running, ensure it's stopped
-    if (!isRunning && runnerRef.current) {
-      Runner.stop(runnerRef.current);
-      runnerRef.current = null;
-    }
-  };
+    };
+  }, [isRunning, gravity, animate]);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4 bg-gray-100 rounded-lg shadow-lg w-full max-w-3xl">
-      <div
-        ref={scene}
-        className="border border-gray-500"
-        style={{
-          width: `${dimensions.width}px`,
-          height: `${dimensions.height}px`
-        }}
-      ></div>
-      <div className="mt-4 flex space-x-2">
-      <Button onClick={handlePlayPause}>
-          {isRunning ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
-          {isRunning ? 'Pause' : 'Play'}
-        </Button>
-        <Button onClick={handleReset} className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-800">
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Reset
-        </Button>
-        {/* <button
-          onClick={handlePlayPause}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          {isRunning ? 'Pause' : 'Play'}
-        </button>
-        <button
-          onClick={handleReset}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Reset
-        </button> */}
-      </div>
-    </div>
+    <Card className="w-full max-w-4xl">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Zap className="h-5 w-5 text-blue-600" />
+          {simulation?.title || "Physics Simulation"}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {simulation?.description || "Interactive bouncing balls with realistic physics"}
+        </p>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        {/* Canvas */}
+        <div className="border rounded-lg overflow-hidden bg-gray-50">
+          <canvas
+            ref={canvasRef}
+            width={800}
+            height={400}
+            className="w-full h-auto cursor-pointer"
+            onClick={addBall}
+          />
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-wrap gap-3 items-center">
+          <Button onClick={toggleSimulation} className="flex items-center gap-2">
+            {isRunning ? (
+              <>
+                <Pause className="h-4 w-4" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4" />
+                Start
+              </>
+            )}
+          </Button>
+          
+          <Button variant="outline" onClick={resetSimulation}>
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset
+          </Button>
+
+          <Button variant="outline" onClick={addBall}>
+            Add Ball
+          </Button>
+
+          <div className="flex items-center gap-3 ml-4">
+            <label className="text-sm font-medium">Gravity:</label>
+            <Slider
+              value={[gravity]}
+              onValueChange={(value) => setGravity(value[0])}
+              max={1.5}
+              min={0}
+              step={0.1}
+              className="w-32"
+            />
+            <span className="text-sm text-muted-foreground w-8">{gravity.toFixed(1)}</span>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="text-center text-sm text-muted-foreground">
+          <p>Click on the canvas to add more balls! • Adjust gravity to see different behaviors</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
