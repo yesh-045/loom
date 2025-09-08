@@ -41,8 +41,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // If no contentType, try to auto-detect component JSON in the text and set type accordingly
+    let contentType = response.contentType;
+    let content = response.content;
+
+    if (!contentType && typeof content === 'string') {
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed && typeof parsed === 'object') {
+          if (Array.isArray(parsed.slides)) {
+            contentType = 'ppt';
+          } else if (Array.isArray(parsed.questions)) {
+            contentType = 'quiz';
+          } else if (Array.isArray(parsed.flashcards)) {
+            contentType = 'flashcards';
+          } else if (Array.isArray(parsed.words) || Array.isArray(parsed.spellings)) {
+            contentType = 'spelling';
+          } else if (parsed && parsed.simulation) {
+            contentType = 'physics';
+          }
+        }
+      } catch { /* ignore JSON parse errors */ }
+    }
+
+    if (contentType) {
+      return NextResponse.json({ content, contentType } as AIResponse, { status: 200 });
+    }
+
     // Return regular text response
-    return NextResponse.json({ content: response.content } as AIResponse, { status: 200 });
+    return NextResponse.json({ content } as AIResponse, { status: 200 });
   } catch (error) {
     console.error("Error generating AI response:", error);
     return NextResponse.json({ error: 'Failed to generate AI response' }, { status: 500 });

@@ -1,7 +1,7 @@
 'use client';
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Settings, Volume2 } from "lucide-react"
+import { Mic, Volume2 } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { useAISettings } from "@/context/AISettingsContext"
@@ -18,7 +18,7 @@ export default function AISettingsPopover() {
           type="button"
           className="inline-flex items-center justify-center rounded-md border p-2 text-sm hover:bg-accent/50"
         >
-          <Settings className="h-4 w-4" />
+          <Mic className="h-4 w-4" />
         </button>
       </PopoverTrigger>
       <PopoverContent>

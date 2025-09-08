@@ -81,7 +81,7 @@ export default function AIChatMessages({ messages, setMessages }: AIChatMessages
             >
               {message.content && (
                 <>
-                  {message.role === 'assistant' && config.voiceMode && typeof message.content === 'string' && (
+                  {message.role === 'assistant' && config.voiceMode && typeof message.content === 'string' && !message.componentMessageType && (
                     <TextToSpeech text={message.content} />
                   )}
                   {(() => {

@@ -21,7 +21,7 @@ export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps)
             <Link href="/" className="text-xl font-bold items-center space-x-1 flex flex-row">
               <span className="sr-only">Home</span>
               <Image className="rounded-full hidden md:block" src={"/logo.png"} alt="" width={35} height={35} />
-              <span className="font-heading tracking-tight text-taupe-500 hover:text-melon-600 transition-colors">loom</span>
+              <span className="font-heading tracking-tight text-taupe-500 hover:text-melon-600 transition-colors">Loom</span>
             </Link>
             {(isSidebarOpen !== undefined && setIsSidebarOpen !== undefined) &&
               <Button

@@ -1,6 +1,6 @@
 export interface AIResponse {
   content: string;
-  contentType?: 'text' | 'quiz' | 'ppt' | 'flashcards' | 'physics' | 'spelling' | 'canvas' | 'image';
+  contentType?: 'text' | 'quiz' | 'ppt' | 'flashcards' | 'physics' | 'spelling' | 'canvas' | 'image' | 'speech' | 'speech-training';
 }
 
 export interface ChatMessage {

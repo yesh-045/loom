@@ -457,8 +457,8 @@ const ComponentToolbar: React.FC<ComponentToolbarProps> = ({
           );
         })}
       </div>
-      <p className="text-xs text-battleship_gray-600 mt-2">
-        Click any button to instantly create a component with sample content
+      <p className="text-xs text-battleship_gray-600 mt-2 text-center font-bold">
+        Click any button to instantly create a component with sample content to test how it works.
       </p>
     </div>
   );

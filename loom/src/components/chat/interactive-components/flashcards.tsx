@@ -11,6 +11,9 @@ interface Flashcard {
   category?: string;
   difficulty?: 'easy' | 'medium' | 'hard';
   mastered?: boolean;
+  // Accept alternative keys from tool output
+  term?: string;
+  definition?: string;
 }
 
 interface FlashcardProps {
@@ -48,7 +51,29 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
     }
   ];
 
-  const validFlashcards = Array.isArray(flashcards) && flashcards.length > 0 ? flashcards : defaultFlashcards;
+  // Normalize incoming flashcards to support both {front,back} and {term,definition}
+  type NormalizedCard = {
+    front: string;
+    back: string;
+    category?: string;
+    difficulty?: 'easy' | 'medium' | 'hard';
+    mastered?: boolean;
+  };
+
+  const normalized: NormalizedCard[] = Array.isArray(flashcards)
+    ? flashcards
+        .map((c) => ({
+          front: (c.front ?? c.term ?? '').trim(),
+          back: (c.back ?? c.definition ?? '').trim(),
+          category: c.category,
+          difficulty: c.difficulty,
+          mastered: c.mastered,
+        }))
+        // Drop entries that are completely empty
+        .filter((c) => c.front.length > 0 || c.back.length > 0)
+    : [];
+
+  const validFlashcards: NormalizedCard[] = normalized.length > 0 ? normalized : defaultFlashcards;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);

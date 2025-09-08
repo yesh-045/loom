@@ -44,7 +44,7 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
         if ('messageType' in message) {
           const { messageType, ...rest } = message;
 
-          if (['quiz', 'ppt', 'flashcards', 'physics', 'spelling', 'canvas', 'image'].includes(messageType as string)) {
+          if (['quiz', 'ppt', 'flashcards', 'physics', 'spelling', 'canvas', 'image', 'speech', 'speech-training'].includes(messageType as string)) {
             return {
               ...rest,
               componentMessageType: messageType as ChatMessage['componentMessageType']
@@ -80,7 +80,7 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
         router.push(`/chat/${chatSessionId}`)
         router.refresh()
 
-        if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech-training") {
+  if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech" || (aiResponse.contentType as string) == "speech-training") {
           const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType as ChatMessage['componentMessageType'] }
 
           setMessages(prevMessages => [...prevMessages, newAiMessage])
@@ -109,7 +109,7 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
 
       console.log(aiResponse)
 
-      if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech-training") {
+  if ((aiResponse.contentType as string) === 'quiz' || (aiResponse.contentType as string) === 'ppt' || (aiResponse.contentType as string) == 'flashcards' || (aiResponse.contentType as string) == 'spelling' || (aiResponse.contentType as string) == "canvas" || (aiResponse.contentType as string) == "image" || (aiResponse.contentType as string) == "physics" || (aiResponse.contentType as string) == "speech" || (aiResponse.contentType as string) == "speech-training") {
         const newAiMessage: ChatMessage = { role: 'assistant', content: aiResponse.content, componentMessageType: aiResponse.contentType as ChatMessage['componentMessageType'] }
 
         setMessages(prevMessages => [...prevMessages, newAiMessage])
@@ -168,16 +168,18 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
       {/* Component Toolbar */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-muted-foreground">Components</span>
+            <span className="text-sm font-medium text-foreground">Components</span>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setIsToolbarOpen(!isToolbarOpen)}
-            className="h-8 w-8 p-0 border-border hover:bg-accent"
+              className="h-8 px-2 gap-1 border border-border text-foreground hover:bg-accent/40"
+              aria-label={isToolbarOpen ? 'Hide components' : 'Show components'}
           >
             {isToolbarOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              <span className="text-xs">{isToolbarOpen ? 'Hide' : 'Show'}</span>
           </Button>
-        </div>
+  </div>
         {isToolbarOpen && (
           <ComponentToolbar 
             onComponentSelect={handleComponentSelect}
@@ -188,9 +190,6 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
 
       <form onSubmit={handleSubmit} className="p-4 bg-secondary border border-border rounded-2xl">
         <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-end pb-2">
-            <AISettingsPopover />
-          </div>
           <div className="flex space-x-2">
             <Textarea
               ref={textareaRef}
@@ -201,6 +200,7 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
               rows={rows}
               className="min-h-[40px] max-h-[200px] resize-none bg-background border border-border rounded-xl"
             />
+            <AISettingsPopover />
             <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-accent rounded-xl">
               <SendIcon className="h-4 w-4" />
               <span className="sr-only">Send</span>
