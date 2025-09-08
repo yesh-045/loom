@@ -15,7 +15,7 @@ interface TimelineSlideProps {
 
 const TimelineSlide: React.FC<TimelineSlideProps> = ({ title, milestones }) => {
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center p-8 bg-white">
+  <div className="w-full h-screen flex flex-col justify-center items-center p-8 bg-card text-foreground border border-border">
       <h2 className="text-3xl font-bold mb-8">{title}</h2>
       <div className="w-full max-w-4xl">
         <div className="relative">
@@ -27,7 +27,7 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ title, milestones }) => {
                   <FaCalendarAlt className="text-blue-500 mb-2" />
                   <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                 </div>
-                <div className="bg-white p-4 rounded shadow-md w-1/2">
+                <div className="bg-background text-foreground border border-border p-4 rounded shadow-md w-1/2">
                   <h3 className="text-xl font-semibold">{milestone.eventTitle}</h3>
                   <span className="text-sm text-gray-500">{milestone.date}</span>
                   <p className="mt-2 text-gray-700">{milestone.description}</p>

@@ -211,14 +211,14 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
       <div className="flex justify-center">
         <div className="relative">
           <div
-            className={`relative w-[320px] h-[240px] md:w-[480px] md:h-[320px] bg-white rounded-xl shadow-lg cursor-pointer transition-all duration-500 transform-gpu perspective-1000 ${
+            className={`relative w-[320px] h-[240px] md:w-[480px] md:h-[320px] bg-card text-foreground border border-border rounded-xl shadow-lg cursor-pointer transition-all duration-500 transform-gpu perspective-1000 ${
               isFlipped ? '[transform:rotateY(180deg)]' : ''
             }`}
             onClick={handleFlip}
           >
             {/* Front of card */}
             <div
-              className={`absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center p-8 rounded-xl border-2 border-gray-200 ${
+              className={`absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center p-8 rounded-xl border-2 border-border ${
                 isFlipped ? 'opacity-0' : 'opacity-100'
               }`}
             >
@@ -229,13 +229,13 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
                   </span>
                 )}
                 <div className="flex items-center gap-2">
-                  <Target className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">Click to reveal</span>
+                  <Target className="h-4 w-4 text-battleship_gray-500" />
+                  <span className="text-sm text-battleship_gray-600">Click to reveal</span>
                 </div>
               </div>
               
               <div className="flex-1 flex items-center justify-center">
-                <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 leading-relaxed">
+                <h2 className="text-xl md:text-2xl font-bold text-center leading-relaxed">
                   {currentCard.front}
                 </h2>
               </div>
@@ -243,7 +243,7 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
 
             {/* Back of card */}
             <div
-              className={`absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center p-8 rounded-xl border-2 border-blue-200 bg-blue-50 ${
+              className={`absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center p-8 rounded-xl border-2 border-border bg-isabelline-600 ${
                 isFlipped ? '[transform:rotateY(180deg)] opacity-100' : 'opacity-0'
               }`}
             >
@@ -260,11 +260,11 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
                   <Trophy className="h-3 w-3 mr-1" />
                   {cardMastery.get(getCurrentCardIndex()) ? 'Mastered' : 'Master'}
                 </Button>
-                <span className="text-sm text-blue-600">Definition</span>
+                <span className="text-sm text-battleship_gray-600">Definition</span>
               </div>
               
               <div className="flex-1 flex items-center justify-center">
-                <p className="text-sm md:text-base text-center text-gray-700 leading-relaxed">
+                <p className="text-sm md:text-base text-center leading-relaxed">
                   {currentCard.back}
                 </p>
               </div>
@@ -273,7 +273,7 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
             {/* Navigation buttons */}
             <button
               type="button"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 opacity-70 hover:opacity-100 bg-white rounded-full p-2 shadow-md transition-all"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 opacity-90 hover:opacity-100 bg-primary text-primary-foreground rounded-full p-2 shadow-md transition-all"
               onClick={handlePrevious}
               aria-label="Previous card"
             >
@@ -282,7 +282,7 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
             
             <button
               type="button"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-70 hover:opacity-100 bg-white rounded-full p-2 shadow-md transition-all"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-90 hover:opacity-100 bg-primary text-primary-foreground rounded-full p-2 shadow-md transition-all"
               onClick={handleNext}
               aria-label="Next card"
             >
@@ -290,8 +290,8 @@ const Flashcards: React.FC<FlashcardProps> = ({ flashcards }) => {
             </button>
 
             {/* Card counter */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full px-3 py-1 shadow-md">
-              <span className="text-sm font-medium text-gray-600">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-secondary text-foreground border border-border rounded-full px-3 py-1 shadow-md">
+              <span className="text-sm font-medium">
                 {currentIndex + 1} of {validFlashcards.length}
               </span>
             </div>

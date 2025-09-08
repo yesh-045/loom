@@ -17,15 +17,15 @@ export default function ChatLayout({ chatHistory, userId, messages, chatId }: { 
 
   return (
     <>
-      <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-      <div className="flex-1 flex overflow-hidden">
+  <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+  <div className="flex-1 flex overflow-hidden bg-background">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel
             defaultSize={20}
             minSize={15}
             maxSize={25}
-            className={`${isSidebarOpen ? 'block' : 'hidden'
-              } md:block absolute md:relative z-40 h-full md:h-auto`}
+    className={`${isSidebarOpen ? 'block' : 'hidden'
+      } md:block absolute md:relative z-40 h-full md:h-auto bg-secondary border-r border-border`}
             style={{ width: isSidebarOpen ? '80%' : '20%' }}
           >
             <ChatHistory history={chatHistory} userId={userId} />

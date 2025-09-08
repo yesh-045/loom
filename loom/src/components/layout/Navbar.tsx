@@ -14,18 +14,18 @@ interface NavbarProps {
 export default function Navbar({ isSidebarOpen, setIsSidebarOpen }: NavbarProps) {
 
   return (
-    <nav className="bg-white">
+    <nav className="bg-card text-foreground border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold items-center space-x-1 flex flex-row">
               <span className="sr-only">Home</span>
               <Image className="rounded-full hidden md:block" src={"/logo.png"} alt="" width={35} height={35} />
-              <span>loom</span>
+              <span className="font-heading tracking-tight text-taupe-500 hover:text-melon-600 transition-colors">loom</span>
             </Link>
             {(isSidebarOpen !== undefined && setIsSidebarOpen !== undefined) &&
               <Button
-                className="block ml-3 z-50 md:hidden"
+                className="block ml-3 z-50 md:hidden bg-primary text-primary-foreground hover:bg-accent"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
                 Chat History
@@ -52,7 +52,7 @@ function AuthButton() {
       <>
         <Image className="rounded-full hidden md:block" src={"/default-profile.jpg"} alt="" width={35} height={35} />
         <Button 
-          className="bg-black rounded-full text-white hover:bg-gray-800 mx-2 md:m-0" 
+          className="rounded-full bg-primary text-primary-foreground hover:bg-accent mx-2 md:m-0" 
           onClick={() => router.push('/auth/signin')}
         >
           Sign out
@@ -64,7 +64,7 @@ function AuthButton() {
   return (
     <>
       <Button 
-        className="bg-black rounded-full text-white hover:bg-gray-800" 
+        className="rounded-full bg-primary text-primary-foreground hover:bg-accent" 
         onClick={() => router.push('/auth/signin')}
       >
         Sign in

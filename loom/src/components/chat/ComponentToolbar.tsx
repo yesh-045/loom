@@ -435,8 +435,8 @@ const ComponentToolbar: React.FC<ComponentToolbarProps> = ({
   };
 
   return (
-    <div className={`bg-white border rounded-lg p-4 shadow-sm ${className}`}>
-      <h3 className="text-sm font-medium text-gray-700 mb-3">
+    <div className={`bg-card border border-border rounded-2xl p-4 shadow-sm ${className}`}>
+      <h3 className="text-sm font-medium text-battleship_gray-600 mb-3">
         Quick Component Creator
       </h3>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
@@ -448,7 +448,7 @@ const ComponentToolbar: React.FC<ComponentToolbarProps> = ({
               variant="outline"
               size="sm"
               onClick={() => handleComponentClick(component)}
-              className="flex flex-col items-center p-2 h-auto hover:bg-blue-50 hover:border-blue-300 transition-colors"
+              className="flex flex-col items-center p-2 h-auto hover:bg-melon-600/20 hover:border-melon-500 transition-colors"
               title={component.description}
             >
               <IconComponent className="w-4 h-4 mb-1" />
@@ -457,7 +457,7 @@ const ComponentToolbar: React.FC<ComponentToolbarProps> = ({
           );
         })}
       </div>
-      <p className="text-xs text-gray-500 mt-2">
+      <p className="text-xs text-battleship_gray-600 mt-2">
         Click any button to instantly create a component with sample content
       </p>
     </div>

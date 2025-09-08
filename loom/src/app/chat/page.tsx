@@ -22,7 +22,7 @@ export default async function Home() {
   })
 
   return (
-    <div className="flex flex-col h-screen bg-grid-black/[0.1]">
+    <div className="flex flex-col h-screen bg-background text-foreground">
       <ChatLayout chatHistory={chatsHistory} userId={stubUser.id} />
     </div>
   );

@@ -12,7 +12,7 @@ interface ComparisonSlideProps {
 
 const ComparisonSlide: React.FC<ComparisonSlideProps> = ({ title, comparisonItems }) => {
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center p-1 sm:p-2 md:p-4 bg-white">
+  <div className="w-full h-full flex flex-col justify-center items-center p-1 sm:p-2 md:p-4 bg-card text-foreground border border-border">
       <h2 className="text-base sm:text-xl font-bold mb-1 sm:mb-2 md:mb-4">{title}</h2>
       <div className="flex flex-row justify-center w-full max-w-5xl space-x-2">
         {comparisonItems.map((item, index) => (

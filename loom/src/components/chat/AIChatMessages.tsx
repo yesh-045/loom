@@ -54,7 +54,7 @@ export default function AIChatMessages({ messages, setMessages }: AIChatMessages
   const { config } = useAISettings();
   
   return (
-    <ScrollArea className="flex-grow w-full p-0 md:p-2 space-y-4">
+  <ScrollArea className="flex-grow w-full p-0 md:p-2 space-y-4 font-sans">
       {messages.map((message, index) => {
         return (
           <div
@@ -62,7 +62,7 @@ export default function AIChatMessages({ messages, setMessages }: AIChatMessages
             className={`flex items-start space-x-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {message.role !== 'user' && (
-              <Avatar className="bg-muted flex-shrink-0 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10">
+              <Avatar className="bg-secondary flex-shrink-0 w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10">
                 <AvatarFallback>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10" stroke="#A0AEC0" strokeWidth="2" />
@@ -72,9 +72,9 @@ export default function AIChatMessages({ messages, setMessages }: AIChatMessages
             )}
 
             <div
-              className={`rounded-lg mb-4 ${message.role === 'user'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted border-2 border-gray-300'
+              className={`rounded-2xl shadow-sm mb-4 ${message.role === 'user'
+                ? 'bg-melon-500 text-white'
+                : 'bg-silver-600 text-taupe-500 border border-border'
                 }
               ${!message.componentMessageType && 'py-2 px-4'}
               `}

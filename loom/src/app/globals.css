@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -14,65 +10,123 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+  /* Brand palette tokens */
+  --taupe-500: #463f3a;
+  --taupe-600: #6f645d;
+  --taupe-700: #978b82;
+  --taupe-800: #b9b1ac;
+  --taupe-900: #dcd8d5;
+  --battleship-400: #6e6662;
+  --battleship-500: #8a817c;
+  --battleship-600: #a19995;
+  --battleship-700: #b9b3b0;
+  --silver-500: #bcb8b1;
+  --silver-600: #cac7c1;
+  --silver-700: #d8d5d1;
+  --isabelline-500: #f4f3ee;
+  --isabelline-600: #f7f6f3;
+  --isabelline-700: #f9f8f6;
+  --melon-400: #  ;
+  --melon-500: #ad5438;
+  --melon-600: #cd7d65;
+
+  /* Semantic tokens (light) */
+  --background: var(--isabelline-500);
+  --foreground: var(--taupe-500);
+  --card: var(--isabelline-600);
+  --card-foreground: var(--taupe-500);
+  --popover: var(--isabelline-600);
+  --popover-foreground: var(--taupe-500);
+  --primary: var(--melon-500);
+  --primary-foreground: white;
+  --secondary: var(--silver-600);
+  --secondary-foreground: var(--taupe-500);
+  --muted: var(--silver-700);
+  --muted-foreground: var(--battleship-500);
+  --accent: var(--melon-500);
+  --accent-foreground: white;
+  --destructive: #ef4444;
+  --destructive-foreground: white;
+  --border: var(--battleship-700);
+  --input: var(--isabelline-600);
+  --ring: var(--melon-500);
+  --chart-1: var(--melon-500);
+  --chart-2: var(--silver-500);
+  --chart-3: var(--battleship-500);
+  --chart-4: var(--taupe-600);
+  --chart-5: var(--isabelline-600);
+  --radius: 1rem; /* 2xl */
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+  --background: var(--taupe-500);
+  --foreground: var(--isabelline-800);
+  --card: var(--taupe-600);
+  --card-foreground: var(--isabelline-900);
+  --popover: var(--taupe-600);
+  --popover-foreground: var(--isabelline-900);
+  --primary: var(--melon-600);
+  --primary-foreground: #ffffff;
+  --secondary: var(--battleship-500);
+  --secondary-foreground: var(--isabelline-900);
+  --muted: var(--battleship-600);
+  --muted-foreground: var(--isabelline-800);
+  --accent: var(--melon-600);
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: var(--battleship-600);
+  --input: var(--taupe-600);
+  --ring: var(--melon-600);
+  --chart-1: var(--melon-600);
+  --chart-2: var(--silver-600);
+  --chart-3: var(--battleship-600);
+  --chart-4: var(--taupe-700);
+  --chart-5: var(--isabelline-700);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+  border-color: var(--border);
   }
   body {
-    @apply bg-background text-foreground;
+  background-color: var(--background);
+  color: var(--foreground);
+  }
+  h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-space-grotesk), var(--font-geist-sans), system-ui, sans-serif;
+    color: var(--foreground);
+  }
+  a { color: var(--melon-500); text-underline-offset: 2px; transition: color .15s ease; }
+  a:hover { color: var(--melon-600); }
+  /* To create a soft card surface, use: bg-card border border-border rounded-2xl shadow-sm */
+  /* Gradient utility for hero */
+  .hero-gradient {
+    /* Base gradient */
+    background-image: linear-gradient(135deg, var(--melon-500) 0%, var(--isabelline-600) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .dark .hero-gradient {
+    background-image: linear-gradient(135deg, var(--melon-600) 0%, var(--silver-600) 100%);
+  }
+  .hero-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(70, 63, 58, 0.15) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+  }
+  .hero-gradient::after {
+    content: "";
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    left: -10vw;
+    top: -20vw;
+    background: radial-gradient(closest-side, rgba(224, 175, 160, 0.25), transparent 70%);
+    filter: blur(20px);
+    pointer-events: none;
   }
 }

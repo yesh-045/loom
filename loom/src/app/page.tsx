@@ -3,8 +3,7 @@
 import Navbar from "@/components/layout/Navbar"
 import { FlipWords } from "@/components/ui/flip-words"
 import { useRef } from "react"
-import { Highlighted } from "@/components/ui/hero-highlight"
-// Removing unused imports
+import { Check, PenTool, BookOpen, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 export default function Home() {
   const words = ["Enhanced Learning", "Better Learning", "Engaged Learning", "Easier Learning"]
@@ -18,114 +17,215 @@ export default function Home() {
   }
 
   return (
-    <div className="w-screen flex flex-col min-h-screen">
+    <div className="w-screen flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />
-      <section className="flex flex-col lg:flex-row w-screen bg-gray-100 px-6 md:px-8 lg:px-12 xl:px-20 py-20 xl:gap-16">
-        <div className="w-full lg:w-1/2">
-          <h1 className="text-5xl sm:text-6xl font-bold mb-2 relative text-center lg:text-left">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-950 to-yellow-500 animate-gradient-x">
-              loom
-            </span>
-          </h1>
-          <p className="text-2xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl mt-8 font-bold text-center lg:text-left">
-            <Highlighted className="text-black dark:text-white">
-              Interactive
-            </Highlighted> {" "}
-            Chat-Based UI components for
-          </p>
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-3xl font-bold mt-1 text-center lg:text-left">
-            <FlipWords words={words} className='text-blue-800' />
-          </h1>
-          <div className="w-full flex">
-            <button className="mt-4 md:mt-6 lg:mt-8 px-5 md:px-6 lg:px-8 xl:px-10 py-1 lg:py-2 text-lg md:text-lg lg:text-xl bg-blue-900 text-white font-semibold rounded-full hover:bg-blue-700 transition-all duration-100 transform hover:scale-105 shadow-lg mx-auto lg:mx-0"
-              onClick={() => router.push("/chat")}
-            >
-              get started
-            </button>
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden px-6 md:px-10 lg:px-16 xl:px-24 py-20">
+        {/* Decorative blurs */}
+        <div className="pointer-events-none absolute -top-24 -left-24 w-80 h-80 bg-melon-600/30 blur-3xl rounded-full" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 w-96 h-96 bg-silver-700/30 blur-3xl rounded-full" />
+        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 backdrop-blur px-3 py-1 text-xs">
+              <span className="inline-block h-2 w-2 rounded-full bg-melon-500" />
+              AI study OS
+            </div>
+            <h1 className="mt-4 text-5xl sm:text-6xl font-heading font-bold tracking-tight">
+              <span className="font-brand text-taupe-500 dark:text-isabelline-900">Loom</span> for
+              <span className="block mt-2"><FlipWords words={words} className='text-foreground' /></span>
+            </h1>
+            <p className="mt-5 text-lg sm:text-xl text-muted-foreground max-w-xl">
+              Build, study, and explore with interactive chat-based components. Create slides, flashcards, quizzes, drawings, and more-guided by AI.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <button
+                className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-6 py-3 text-base font-semibold shadow-sm"
+                onClick={() => router.push("/chat")}
+              >
+                Get started
+              </button>
+              <a href="#showcase" className="rounded-full border border-border bg-background hover:bg-accent/20 px-6 py-3 text-base font-semibold">
+                See how it works
+              </a>
+            </div>
           </div>
-        </div>
-        <div className="w-full lg:w-1/2 mt-8 lg:mt-0">
-          <div className="relative group/card w-full rounded-2xl aspect-[16/9] border-2 border-gray-400 shadow-xl">
-            <video
-              ref={videoRef}
-              src="/videos/hero-video.mp4"
-              className="object-cover rounded-2xl w-full h-full"
-              onEnded={handleVideoEnd}
-              autoPlay
-              muted
-            />
+          <div>
+            <div className="relative rounded-3xl border border-border bg-card/80 backdrop-blur shadow-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
+              <video
+                ref={videoRef}
+                src="/videos/hero-video.mp4"
+                className="object-cover w-full h-full aspect-[16/9]"
+                onEnded={handleVideoEnd}
+                autoPlay
+                muted
+                playsInline
+                preload="metadata"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Live demo preview</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-      <section className="w-full flex flex-col px-6 md:px-8 lg:px-12 xl:px-20 py-20 bg-dot-black/[0.1] space-y-16">
-        <h1 className="text-center text-4xl sm:text-5xl md:text-6xl font-bold"> Product </h1>
-        <div className="flex flex-col-reverse lg:flex-row w-full">
-          <div className="w-3/4 lg:w-1/2 mt-8 lg:mt-0 mx-auto">
-            <div className="relative group/card w-full rounded-2xl aspect-[16/9] border-2 border-gray-400 shadow-xl">
-              <video
-                ref={videoRef}
-                src="/videos/basic-features.mp4"
-                className="object-cover rounded-2xl w-full h-full"
-                autoPlay
-                muted
-                loop
-              />
-            </div>
-          </div>
-          <div className="w-full lg:w-1/2">
-            <h1 className="text-3xl sm:text-4xl lg:mt-8 text-center lg:text-left lg:ml-16 font-semibold mb-2 relative">
-              Interactive study components
-            </h1>
-            <p className="text-base sm:text-xl lg:text-xl xl:text-2xl mt-4 text-center lg:text-left lg:ml-16">
-              Engage with presentations, flashcards, quizzes, and other interactive components designed to make you learning time, more efficient.
-            </p>
-          </div>
+
+      {/* Social proof */}
+      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-6">
+        <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+          <span className="rounded-full border border-border bg-card px-3 py-1">Used by students and teams</span>
+          <span className="rounded-full border border-border bg-card px-3 py-1">Slides • Flashcards • Quizzes</span>
+          <span className="rounded-full border border-border bg-card px-3 py-1">Canvas • Physics • TTS</span>
         </div>
-        <div className="flex flex-col lg:flex-row w-full">
-          <div className="w-full lg:w-1/2">
-            <h1 className="text-3xl sm:text-4xl lg:mt-8 text-center lg:text-left lg:ml-16 font-semibold mb-2 relative">
-              Advanced AI canvas
-            </h1>
-            <p className="text-base pr-8 sm:text-xl lg:text-xl xl:text-2xl mt-4 text-center lg:text-left lg:ml-16">
-              Create, draw, and illustrate complex problems for loom to solve and explain.
-            </p>
-          </div>
-          <div className="w-3/4 lg:w-1/2 mt-8 lg:mt-0 mx-auto">
-            <div className="relative group/card w-full rounded-2xl aspect-[16/9] border-2 border-gray-400 shadow-xl">
-              <video
-                ref={videoRef}
-                src="/videos/draw-feature.mp4"
-                className="object-cover rounded-2xl w-full h-full"
-                autoPlay
-                muted
-                loop
-              />
+      </section>
+
+      {/* Quick capabilities */}
+      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-12">
+        <div className="mx-auto max-w-7xl">
+          <h2 className="text-center text-3xl sm:text-4xl font-heading font-bold">What you can do</h2>
+          <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Slides */}
+            <div className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-all h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-melon-500/15 text-melon-600 flex items-center justify-center">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <span className="font-semibold">Slides</span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Auto-structured decks</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">ex: “Photosynthesis basics”</span>
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">“WWII overview”</span>
+              </div>
+              <div className="mt-4 flex items-center gap-3">
+                <button className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-4 py-2 text-xs font-semibold" onClick={() => router.push('/chat')}>Try now</button>
+                <a href="#showcase" className="text-xs font-medium text-melon-600 hover:underline">View demo →</a>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="flex flex-col-reverse lg:flex-row w-full">
-          <div className="w-3/4 lg:w-1/2 mt-8 lg:mt-0 mx-auto">
-            <div className="relative group/card w-full rounded-2xl aspect-[16/9] border-2 border-gray-400 shadow-xl">
-              <video
-                ref={videoRef}
-                src="/videos/physics-feature.mp4"
-                className="object-cover rounded-2xl w-full h-full"
-                autoPlay
-                muted
-                loop
-              />
+            {/* Flashcards */}
+            <div className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-all h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-melon-500/15 text-melon-600 flex items-center justify-center">
+                  <BookOpen className="h-4 w-4" />
+                </div>
+                <span className="font-semibold">Flashcards</span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Smart review sets</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">ex: “Key terms: cells”</span>
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">“French verbs”</span>
+              </div>
+              <div className="mt-4 flex items-center gap-3">
+                <button className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-4 py-2 text-xs font-semibold" onClick={() => router.push('/chat')}>Try now</button>
+                <a href="#showcase" className="text-xs font-medium text-melon-600 hover:underline">View demo →</a>
+              </div>
             </div>
-          </div>
-          <div className="w-full lg:w-1/2">
-            <h1 className="text-3xl sm:text-4xl lg:mt-8 text-center lg:text-left lg:ml-16 font-semibold mb-2 relative">
-              Physics Simulator
-            </h1>
-            <p className="text-base sm:text-xl lg:text-xl xl:text-2xl mt-4 text-center lg:text-left lg:ml-16">
-              Experience real-time physics simulations to understand complex concepts through interactive and visual experimentation.
-            </p>
+            {/* Quizzes */}
+            <div className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-all h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-melon-500/15 text-melon-600 flex items-center justify-center">
+                  <Check className="h-4 w-4" />
+                </div>
+                <span className="font-semibold">Quizzes</span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Instant feedback</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">ex: “Algebra basics”</span>
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">“Capitals quiz”</span>
+              </div>
+              <div className="mt-4 flex items-center gap-3">
+                <button className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-4 py-2 text-xs font-semibold" onClick={() => router.push('/chat')}>Try now</button>
+                <a href="#showcase" className="text-xs font-medium text-melon-600 hover:underline">View demo →</a>
+              </div>
+            </div>
+            {/* Canvas */}
+            <div className="rounded-xl border border-border bg-card p-5 hover:shadow-md transition-all h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full bg-melon-500/15 text-melon-600 flex items-center justify-center">
+                  <PenTool className="h-4 w-4" />
+                </div>
+                <span className="font-semibold">Canvas</span>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Sketch & explain</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">ex: “Graph parabola”</span>
+                <span className="rounded-full bg-background border border-border px-2.5 py-0.5 text-[11px] text-muted-foreground">“Free body diagram”</span>
+              </div>
+              <div className="mt-4 flex items-center gap-3">
+                <button className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-4 py-2 text-xs font-semibold" onClick={() => router.push('/chat')}>Try now</button>
+                <a href="#showcase" className="text-xs font-medium text-melon-600 hover:underline">View demo →</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Feature spotlight (alternating) */}
+      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-14">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="order-2 lg:order-1">
+            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Interactive study components</h3>
+            <p className="mt-3 text-muted-foreground">Generate presentations, flashcards, and quizzes tuned to your prompt.</p>
+            <ul className="mt-4 space-y-2 text-sm leading-relaxed">
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Auto-structured slides and bullet points</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Flashcards with spaced practice</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Quizzes with instant feedback</li>
+            </ul>
+          </div>
+          <div className="order-1 lg:order-2">
+            <div className="relative rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
+              <div className="aspect-[16/9]">
+                <video src="/videos/basic-features.mp4" className="object-cover w-full h-full" autoPlay muted loop playsInline preload="metadata" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-14">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <div className="relative rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
+              <div className="aspect-[16/9]">
+                <video src="/videos/draw-feature.mp4" className="object-cover w-full h-full" autoPlay muted loop playsInline preload="metadata" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Advanced AI canvas</h3>
+            <p className="mt-3 text-muted-foreground">Sketch, annotate, and explore complex problems. Let AI explain step-by-step.</p>
+            <ul className="mt-4 space-y-2 text-sm leading-relaxed">
+              <li className="flex items-start gap-2"><PenTool className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Freehand drawing and annotations</li>
+              <li className="flex items-start gap-2"><BookOpen className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Explanations tailored to your sketch</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Export snippets into slides or cards</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      
+        <section id="showcase" className="px-6 md:px-10 lg:px-16 xl:px-24 py-16">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-center text-4xl sm:text-5xl font-heading font-bold">In action</h2>
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Tile 1 */}
+              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
+                <video src="/videos/draw-feature.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
+                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">AI Canvas</div>
+              </div>
+              {/* Tile 2 */}
+              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
+                <video src="/videos/basic-features.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
+                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Study components</div>
+              </div>
+              {/* Tile 3 */}
+              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
+                <video src="/videos/physics-feature.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
+                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Physics simulator</div>
+              </div>
+            </div>
+          </div>
+        </section>
       
     </div>
   )

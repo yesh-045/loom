@@ -57,7 +57,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
   };
 
   return (
-    <div className="flex flex-col flex-grow items-center w-[250px] sm:w-[450px] md:w-[550px] bg-white rounded-lg shadow-md p-6">
+  <div className="flex flex-col flex-grow items-center w-[250px] sm:w-[450px] md:w-[550px] bg-card text-foreground border border-border rounded-2xl shadow-md p-6">
       <h2 className="text-2xl font-bold text-card-foreground mb-4">Image Upload</h2>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4 w-full">
         <div>
@@ -78,7 +78,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
           <Button
             type="submit"
             disabled={!file || uploading}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200"
+            className="w-full py-2 px-4 bg-primary text-primary-foreground rounded-lg hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-melon-500 disabled:opacity-50 transition-colors duration-200"
           >
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>

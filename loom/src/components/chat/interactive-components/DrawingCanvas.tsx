@@ -145,9 +145,9 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ setMessages }) => {
           onMouseDown={startDrawing}
           onMouseUp={stopDrawing}
           onMouseMove={draw}
-          className="border-4 border-gray-300 rounded-lg shadow-inner bg-white w-full h-full"
+          className="border-4 border-border rounded-2xl shadow-inner bg-card w-full h-full"
         />
-        <div className="absolute bottom-2 left-2 bg-white p-2 rounded-md shadow">
+  <div className="absolute bottom-2 left-2 bg-card text-foreground p-2 rounded-md shadow border border-border">
           <input
             type="color"
             value={color}

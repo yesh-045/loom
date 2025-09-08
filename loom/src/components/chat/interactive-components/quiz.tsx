@@ -39,7 +39,7 @@ const Quiz: React.FC<QuizProps> = ({ questions }) => {
   };
 
   return (
-    <div className="flex flex-col flex-grow items-center rounded-lg bg-white w-[250px] sm:w-[450px] md:w-[550px] justify-center p-4">
+  <div className="flex flex-col flex-grow items-center rounded-2xl bg-card border border-border w-[250px] sm:w-[450px] md:w-[550px] justify-center p-4">
       {showScore ? (
         <div className="text-center">
           <p className="text-2xl font-bold mb-4">
@@ -47,7 +47,7 @@ const Quiz: React.FC<QuizProps> = ({ questions }) => {
           </p>
           <button
             onClick={handleRedo}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+            className="bg-primary text-primary-foreground font-semibold py-2 px-4 rounded hover:bg-accent transition duration-300 ease-in-out"
           >
             Redo Quiz
           </button>
@@ -60,7 +60,7 @@ const Quiz: React.FC<QuizProps> = ({ questions }) => {
               <button
                 key={index}
                 onClick={() => handleAnswerClick(choice.isCorrect)}
-                className="w-full p-3 text-left bg-white hover:bg-gray-50 border border-gray-300 rounded-md transition duration-300 ease-in-out"
+                className="w-full p-3 text-left bg-background hover:bg-isabelline-600 border border-border rounded-md transition duration-300 ease-in-out"
               >
                 {choice.text}
               </button>

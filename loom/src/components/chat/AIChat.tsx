@@ -1,6 +1,6 @@
 'use client'
 
-import { SendIcon } from 'lucide-react'
+import { SendIcon, ChevronUp, ChevronDown } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -18,6 +18,7 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [rows, setRows] = useState(1)
+  const [isToolbarOpen, setIsToolbarOpen] = useState(true)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -161,18 +162,31 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
   }
 
   return (
-    <div className="flex flex-col w-full max-w-3xl h-full mx-auto px-4">
+  <div className="flex flex-col w-full max-w-3xl h-full mx-auto px-4">
       <AIChatMessages messages={messages} setMessages={setMessages} />
       
       {/* Component Toolbar */}
       <div className="mb-4">
-        <ComponentToolbar 
-          onComponentSelect={handleComponentSelect}
-          className="w-full"
-        />
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-muted-foreground">Components</span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsToolbarOpen(!isToolbarOpen)}
+            className="h-8 w-8 p-0 border-border hover:bg-accent"
+          >
+            {isToolbarOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
+        </div>
+        {isToolbarOpen && (
+          <ComponentToolbar 
+            onComponentSelect={handleComponentSelect}
+            className="w-full"
+          />
+        )}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 bg-white border-2 border-black border-b-0 rounded-t-lg">
+      <form onSubmit={handleSubmit} className="p-4 bg-secondary border border-border rounded-2xl">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-end pb-2">
             <AISettingsPopover />
@@ -185,9 +199,9 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
               rows={rows}
-              className="min-h-[40px] max-h-[200px] resize-none"
+              className="min-h-[40px] max-h-[200px] resize-none bg-background border border-border rounded-xl"
             />
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-accent rounded-xl">
               <SendIcon className="h-4 w-4" />
               <span className="sr-only">Send</span>
             </Button>

@@ -20,52 +20,151 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			sans: [
+				'var(--font-geist-sans)',
+				'var(--font-inter)',
+				'var(--font-dm-sans)',
+				'system-ui',
+				'-apple-system',
+				'Segoe UI',
+				'Roboto',
+				'Helvetica',
+				'Arial',
+				'sans-serif',
+			],
+			heading: [
+				'var(--font-space-grotesk)',
+				'var(--font-dm-sans)',
+				'var(--font-inter)',
+				'system-ui',
+				'sans-serif',
+			],
+			brand: [
+				'var(--font-outfit)',
+				'var(--font-space-grotesk)',
+				'system-ui',
+				'sans-serif',
+			],
+			mono: [
+				'var(--font-geist-mono)',
+				'ui-monospace',
+				'SFMono-Regular',
+				'Menlo',
+				'Monaco',
+				'Consolas',
+				'monospace',
+			],
+		},
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+			// Use raw CSS color variables (can be hex/rgb/hsl)
+			background: 'var(--background)',
+			foreground: 'var(--foreground)',
   			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: 'var(--card)',
+					foreground: 'var(--card-foreground)'
   			},
   			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: 'var(--popover)',
+					foreground: 'var(--popover-foreground)'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: 'var(--primary)',
+					foreground: 'var(--primary-foreground)'
   			},
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: 'var(--secondary)',
+					foreground: 'var(--secondary-foreground)'
   			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: 'var(--muted)',
+					foreground: 'var(--muted-foreground)'
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: 'var(--accent)',
+					foreground: 'var(--accent-foreground)'
   			},
   			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+					DEFAULT: 'var(--destructive)',
+					foreground: 'var(--destructive-foreground)'
   			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
+				border: 'var(--border)',
+				input: 'var(--input)',
+				ring: 'var(--ring)',
   			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+					'1': 'var(--chart-1)',
+					'2': 'var(--chart-2)',
+					'3': 'var(--chart-3)',
+					'4': 'var(--chart-4)',
+					'5': 'var(--chart-5)'
   			}
+				,
+				// Custom brand palette
+				taupe: {
+					DEFAULT: '#463f3a',
+					100: '#0e0d0c',
+					200: '#1c1917',
+					300: '#2a2623',
+					400: '#38322e',
+					500: '#463f3a',
+					600: '#6f645d',
+					700: '#978b82',
+					800: '#b9b1ac',
+					900: '#dcd8d5',
+				},
+				battleship_gray: {
+					DEFAULT: '#8a817c',
+					100: '#1c1a18',
+					200: '#373331',
+					300: '#534d49',
+					400: '#6e6662',
+					500: '#8a817c',
+					600: '#a19995',
+					700: '#b9b3b0',
+					800: '#d0ccca',
+					900: '#e8e6e5',
+				},
+				silver: {
+					DEFAULT: '#bcb8b1',
+					100: '#282622',
+					200: '#4f4b44',
+					300: '#777165',
+					400: '#9c958a',
+					500: '#bcb8b1',
+					600: '#cac7c1',
+					700: '#d8d5d1',
+					800: '#e5e3e0',
+					900: '#f2f1f0',
+				},
+				isabelline: {
+					DEFAULT: '#f4f3ee',
+					100: '#3b3726',
+					200: '#756e4d',
+					300: '#a8a17a',
+					400: '#cfcab5',
+					500: '#f4f3ee',
+					600: '#f7f6f3',
+					700: '#f9f8f6',
+					800: '#fbfbf9',
+					900: '#fdfdfc',
+				},
+				melon: {
+					DEFAULT: '#743825',
+					100: '#3a1c13',
+					200: '#743825',
+					300: '#ad5438',
+					400: '#cd7d65',
+					500: '#e0afa0',
+					600: '#e6beb2',
+					700: '#eccec5',
+					800: '#f3dfd8',
+					900: '#f9efec',
+				},
   		},
   		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+				lg: 'var(--radius)',
+				md: 'calc(var(--radius) - 2px)',
+				sm: 'calc(var(--radius) - 4px)'
   		}
   	}
   },

@@ -34,7 +34,7 @@ export default function ChatHistory({ history, userId }: ChatHistoryProps) {
   const router = useRouter()
 
   return (
-    <div className="h-full bg-gray-50 p-4 flex flex-col">
+    <div className="h-full bg-secondary p-4 flex flex-col border-r border-border">
       <Link href={"/chat"} className="mb-4">
         <Button className="w-full flex items-center gap-2">
           <PlusCircle size={20} />
@@ -51,17 +51,17 @@ export default function ChatHistory({ history, userId }: ChatHistoryProps) {
               <Link href={`/chat/${chat.chatSessionId}`}>
                 <Button
                   {...({ variant: 'ghost' } as { variant: 'ghost' })}
-                  className={`relative group w-full justify-start mb-2 text-left hover:bg-gray-200 ${isActive ? 'bg-gray-300 hover:bg-gray-300' : ''}`}
+                  className={`relative group w-full justify-start mb-2 text-left hover:bg-secondary/60 ${isActive ? 'bg-secondary' : ''}`}
                 >
                   <MessageCircle size={18} className="mr-1 -ml-3 flex-shrink-0" />
                   <div className="flex-1 overflow-hidden">
                     <div className="text-clip">{chat.chatName}</div>
-                    <div className="text-xs text-gray-500">{chat.createdAt.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">{chat.createdAt.toLocaleString()}</div>
                   </div>
 
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Ellipsis size={20} color="white" className='absolute inset-y-0 top-0 bottom-0 right-2 m-auto invisible group-hover:visible group-hover:bg-slate-500 rounded' />
+                      <Ellipsis size={20} className='absolute inset-y-0 top-0 bottom-0 right-2 m-auto invisible group-hover:visible text-foreground rounded' />
                     </PopoverTrigger>
                     <PopoverContent className="w-25">
                       <div className="flex flex-col space-y-5">

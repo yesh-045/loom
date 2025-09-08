@@ -77,7 +77,7 @@ const PptSlides: React.FC<PptSlidesProps> = ({ slides }) => {
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <div className="absolute top-0 left-0 w-full h-full bg-white rounded-lg overflow-hidden">
+  <div className="absolute top-0 left-0 w-full h-full bg-card text-foreground rounded-lg overflow-hidden border border-border">
           {renderSlide(slides[currentSlide])}
         </div>
         {isHovering &&
