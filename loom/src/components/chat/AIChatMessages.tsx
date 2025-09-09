@@ -3,14 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ScrollArea } from "../ui/scroll-area";
 import { ChatMessage } from "@/lib/types";
-import Quiz from "./interactive-components/quiz";
-import PptSlides from "./interactive-components/PptSlides";
-import Flashcards from "./interactive-components/Flashcards";
-import ImageUploader from "./interactive-components/ImageUploader";
-import DrawingCanvas from "./interactive-components/DrawingCanvas";
-import Spelling from "./interactive-components/spelling";
-import PhysicsSimulator from "./interactive-components/PhysicsSimulator";
-import SpeechTraining from "./interactive-components/SpeechTraining";
+import { Quiz, PptSlides, Flashcards, ImageUploader, DrawingCanvas, Spelling, PhysicsSimulator, SpeechTraining } from './interactive-components';
 import ReactMarkdown from 'react-markdown';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import React from "react";

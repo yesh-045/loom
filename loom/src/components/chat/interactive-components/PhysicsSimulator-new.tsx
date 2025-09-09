@@ -190,7 +190,7 @@ const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ simulation }) => {
   }, [isRunning, lastTime, config.type, balls, pendulums, wavePhase, gravity, friction, restitution]);
 
   // Update bouncing balls physics
-  const updateBalls = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+  const updateBalls = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     setBalls(prevBalls => {
       const newBalls = prevBalls.map(ball => {
         const newBall = { ...ball };
@@ -299,10 +299,10 @@ const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ simulation }) => {
       ctx.arc(ball.x - ball.radius * 0.3, ball.y - ball.radius * 0.3, ball.radius * 0.4, 0, Math.PI * 2);
       ctx.fill();
     });
-  };
+  }, [config.type, gravity, friction, restitution, balls]);
 
   // Update pendulum physics
-  const updatePendulums = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+  const updatePendulums = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     setPendulums(prevPendulums => {
       return prevPendulums.map((pendulum, index) => {
         const newPendulum = { ...pendulum };
@@ -348,10 +348,10 @@ const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ simulation }) => {
       ctx.arc(pendulum.bob.x, pendulum.bob.y, 15, 0, Math.PI * 2);
       ctx.fill();
     });
-  };
+  }, [gravity, pendulums]);
 
   // Update wave simulation
-  const updateWave = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+  const updateWave = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     setWavePhase(prev => prev + (config.parameters?.wave_frequency || 0.02));
 
     ctx.strokeStyle = '#4F94CD';
@@ -385,7 +385,7 @@ const PhysicsSimulator: React.FC<PhysicsSimulatorProps> = ({ simulation }) => {
       }
     }
     ctx.stroke();
-  };
+  }, [wavePhase, config.parameters?.wave_frequency]);
 
   // Play collision sound
   const playCollisionSound = () => {

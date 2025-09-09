@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
     }
 
     // If no contentType, try to auto-detect component JSON in the text and set type accordingly
-    let contentType = response.contentType;
-    let content = response.content;
+  let contentType = response.contentType;
+  const content = response.content;
 
     if (!contentType && typeof content === 'string') {
       try {

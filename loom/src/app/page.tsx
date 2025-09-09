@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import Navbar from "@/components/layout/Navbar"
+import Image from "next/image"
 import { FlipWords } from "@/components/ui/flip-words"
 import { useRef } from "react"
 import { Check, PenTool, BookOpen, Sparkles } from "lucide-react"
@@ -287,18 +288,18 @@ export default function Home() {
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Tile 1 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-              <img src="/board.png" className="absolute inset-0 w-full h-full object-contain" alt="Interactive Board" />
+              <Image src="/board.png" fill priority className="object-contain" alt="Interactive Board" />
               <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Interactive Board</div>
               </div>
               {/* Tile 2 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-              <img src="/st.png" className="absolute inset-0 w-full h-full object-contain" alt="Speech Training" />
+              <Image src="/st.png" fill className="object-contain" alt="Speech Training" />
               <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Speech Training</div>
               </div>
               
           {/* Tile 3 */}
           <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-          <img src="/spelltest.png" className="absolute inset-0 w-full h-full object-contain" alt="Spell Test" />
+          <Image src="/spelltest.png" fill className="object-contain" alt="Spell Test" />
           <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Spell Test</div>
           </div>
       

@@ -6,10 +6,41 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Minimal Web Speech API typings
+// Provide minimal typings (avoid explicit any) for SpeechRecognition if not in lib
+// We create lightweight fallbacks so we can type without enabling dom.speech in tsconfig
+interface MinimalSpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultListLike;
+}
+
+interface SpeechRecognitionAlternativeLike { transcript: string; confidence?: number }
+interface SpeechRecognitionResultLike {
+  length: number;
+  item: (index: number) => SpeechRecognitionAlternativeLike;
+  [index: number]: SpeechRecognitionAlternativeLike;
+  isFinal?: boolean;
+}
+interface SpeechRecognitionResultListLike {
+  length: number;
+  item: (index: number) => SpeechRecognitionResultLike;
+  [index: number]: SpeechRecognitionResultLike;
+}
+
+interface MinimalSpeechRecognition {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  start: () => void;
+  stop: () => void;
+  onresult: ((e: MinimalSpeechRecognitionEvent) => void) | null;
+  onerror: ((e: Event) => void) | null;
+  onend: (() => void) | null;
+}
+
 declare global {
   interface Window {
-    webkitSpeechRecognition: new () => any;
-    SpeechRecognition: new () => any;
+    webkitSpeechRecognition?: new () => MinimalSpeechRecognition;
+    SpeechRecognition?: new () => MinimalSpeechRecognition;
   }
 }
 
@@ -128,7 +159,7 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
   const [recording, setRecording] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const recRef = useRef<any>(null);
+  const recRef = useRef<MinimalSpeechRecognition | null>(null);
 
   // Mic devices and permissions
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
@@ -165,8 +196,8 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
 
   // Initialize recognition once
   useEffect(() => {
-    const SR = (typeof window !== "undefined" && (window.webkitSpeechRecognition || window.SpeechRecognition)) as
-      | (new () => any)
+    const SR = (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition)) as
+      | (new () => MinimalSpeechRecognition)
       | undefined;
     if (!SR) {
       setError("Speech recognition is not supported in this browser. Use Chrome, Edge, or Safari.");
@@ -178,10 +209,12 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
     rec.lang = "en-US";
     rec.maxAlternatives = 1;
 
-    rec.onresult = (e: any) => {
+  rec.onresult = (e: MinimalSpeechRecognitionEvent) => {
       try {
-        const final = e.results?.[e.results.length - 1]?.[0];
-        const transcript = String(final?.transcript || "").trim();
+    const results = e.results;
+    const last = results.item(results.length - 1);
+  const alt = last && last.item ? last.item(0) : (last as unknown as { 0?: { transcript?: string }} )[0];
+    const transcript = String(alt?.transcript || "").trim();
         const acc = accuracyScore(current.text, transcript);
         setResult({ transcript, accuracy: acc });
       } finally {
@@ -205,22 +238,28 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
 
   // Load mic permission state and devices
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
-        if (typeof navigator !== 'undefined' && (navigator as any).permissions?.query) {
+  const nav = navigator as Navigator & { permissions?: { query: (opts: { name: string }) => Promise<{ state: PermissionState; onchange: (() => void) | null }> } };
+  if (nav.permissions?.query) {
           try {
-            const status = await (navigator as any).permissions.query({ name: 'microphone' } as any);
-            setPermissionState(status.state);
-            status.onchange = () => setPermissionState(status.state);
+            const status = await nav.permissions.query({ name: 'microphone' });
+            if (!cancelled) {
+              setPermissionState(status.state as typeof permissionState);
+              status.onchange = () => setPermissionState(status.state as typeof permissionState);
+            }
           } catch {
-            setPermissionState('unknown');
+            if (!cancelled) setPermissionState('unknown');
           }
         }
         if (navigator.mediaDevices?.enumerateDevices) {
           const all = await navigator.mediaDevices.enumerateDevices();
-          setDevices(all.filter((d) => d.kind === 'audioinput'));
+          if (cancelled) return;
+          const inputs = all.filter((d) => d.kind === 'audioinput');
+          setDevices(inputs);
           if (!selectedDeviceId) {
-            const first = all.find((d) => d.kind === 'audioinput');
+            const first = inputs[0];
             if (first) setSelectedDeviceId(first.deviceId);
           }
         }
@@ -228,7 +267,8 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
         /* ignore */
       }
     })();
-  }, []);
+    return () => { cancelled = true; };
+  }, [selectedDeviceId, permissionState]);
 
   const start = async () => {
     setError(null);
@@ -256,7 +296,8 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const Ctor: typeof AudioContext = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+  const ctx: AudioContext = new Ctor();
       audioCtxRef.current = ctx;
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
@@ -296,14 +337,14 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
           const hz = estimatePitchHz(bufCopy, audioCtxRef.current.sampleRate);
           if (hz && hz >= 50 && hz <= 400) pitchSamplesRef.current.push(hz);
         }
-        sampleTimerRef.current = window.setTimeout(tick, sampleMs) as any;
+        sampleTimerRef.current = window.setTimeout(tick, sampleMs);
       };
       tick();
     } catch (e) {
       setRecording(false);
       let msg = "Unable to access microphone. Check permissions and try again.";
       if (e && typeof e === 'object') {
-        const name = (e as any).name as string | undefined;
+  const name = (e as { name?: string }).name;
         if (name === 'NotAllowedError' || name === 'SecurityError') {
           msg = "Microphone access blocked by the browser. Allow mic in site settings and reload.";
         } else if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
@@ -312,8 +353,8 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
           msg = "Microphone is in use by another app. Close apps like Zoom/Discord and retry.";
         } else if (name === 'OverconstrainedError') {
           msg = "Selected microphone is unavailable. Choose a different device.";
-        } else if ((e as any).message) {
-          msg = (e as any).message;
+        } else if ((e as { message?: string }).message) {
+          msg = (e as { message?: string }).message as string;
         }
       }
       setError(msg);
@@ -401,7 +442,8 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
         body: JSON.stringify({ text: current.text, voice: 'pNInz6obpgDQGcFmaJgB' }) // Adam
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({} as any));
+        type ErrShape = { error?: string };
+        const err: ErrShape = await res.json().catch(() => ({} as ErrShape));
         throw new Error(err?.error || 'TTS request failed');
       }
       const buf = await res.arrayBuffer();
@@ -454,7 +496,17 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
               {permissionState === 'prompt' && 'Mic permission not yet granted.'}
             </div>
             <div className="flex items-center gap-2">
-              
+              {devices.length > 1 && (
+                <select
+                  className="text-xs border rounded px-2 py-1 bg-background"
+                  value={selectedDeviceId}
+                  onChange={(e) => setSelectedDeviceId(e.target.value || undefined)}
+                >
+                  {devices.map(d => (
+                    <option key={d.deviceId} value={d.deviceId}>{d.label || `Mic ${d.deviceId.slice(0,5)}`}</option>
+                  ))}
+                </select>
+              )}
               <Button variant="outline" onClick={prev} disabled={idx === 0}>Prev</Button>
               <Button variant="outline" onClick={next} disabled={idx === list.length - 1}>Next</Button>
             </div>
@@ -490,6 +542,9 @@ const SpeechTraining: React.FC<SpeechTrainingProps> = ({ exercises }) => {
 
           {ttsError && (
             <div className="p-3 rounded border border-red-200 bg-red-50 text-red-700 text-sm">{ttsError}</div>
+          )}
+          {error && (
+            <div className="p-3 rounded border border-red-200 bg-red-50 text-red-700 text-sm">{error}</div>
           )}
 
           {/* Results */}

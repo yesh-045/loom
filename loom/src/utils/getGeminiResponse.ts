@@ -1,17 +1,42 @@
 import { ChatMessage, AIResponse } from "@/lib/types";
 import functionCallingTools from "@/utils/functionCallingTools";
 
+interface GeminiFunctionCallPart {
+  functionCall?: {
+    name: string;
+    args?: Record<string, unknown>;
+  };
+  text?: string;
+}
+
+interface GeminiContent {
+  parts?: GeminiFunctionCallPart[];
+}
+
+interface GeminiCandidate {
+  content?: GeminiContent;
+}
+
+interface GeminiAPIResponse {
+  candidates?: GeminiCandidate[];
+}
+
 // Convert messages to Gemini API format
 function convertMessagesToGeminiFormat(messages: ChatMessage[]) {
   return messages.map(msg => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
     parts: [{
-      text: typeof msg.content === 'string' ? msg.content : 
-        Array.isArray(msg.content) ? msg.content.map(c => {
-          if (c.type === 'text') return (c ).text || '';
-          if (c.type === 'image') return `[Image: ${(c ).imageUrl || 'unknown'}]`;
-          return '';
-        }).join(' ') : String(msg.content)
+      text: typeof msg.content === 'string'
+        ? msg.content
+        : Array.isArray(msg.content)
+          ? msg.content.map(partRaw => {
+              if (typeof partRaw !== 'object' || partRaw === null) return '';
+              const p = partRaw as { type?: string; text?: string; imageUrl?: string };
+              if (p.type === 'text') return p.text || '';
+              if (p.type === 'image') return `[Image: ${p.imageUrl || 'unknown'}]`;
+              return '';
+            }).join(' ')
+          : String(msg.content)
     }]
   }));
 }
@@ -77,7 +102,7 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
     );
 
     // Gemini-safe parameter schemas (avoid unsupported keywords like oneOf/const/additionalProperties)
-    const geminiParams: Record<string, any> = {
+  const geminiParams: Record<string, unknown> = {
       create_quiz: {
         type: 'object',
         properties: {
@@ -275,7 +300,7 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
       throw new Error(`Gemini API error: ${response.status}`);
     }
 
-    const data = await response.json();
+  const data: GeminiAPIResponse = await response.json();
     console.log('Gemini Response:', JSON.stringify(data, null, 2));
     
   const candidate = data.candidates?.[0];
@@ -283,11 +308,11 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
     
     // Check if it's a function call
     // Search for the first function call across all parts
-    const functionCallPart = content?.parts?.find((p: any) => p.functionCall);
+    const functionCallPart = content?.parts?.find((p) => p.functionCall);
     if (functionCallPart?.functionCall) {
       const functionCall = functionCallPart.functionCall;
       const functionName = functionCall.name;
-      let functionArgs = functionCall.args;
+      let functionArgs = functionCall.args as Record<string, unknown> | undefined;
       
       // Map function names to content types (aligned with function-calling-tools definitions)
       const functionContentTypes: Record<string, AIResponse['contentType']> = {
@@ -313,11 +338,13 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
             'Comparison Slide'
           ]);
 
-          const norm = (s: any): any => {
-            let t = s?.type;
-            const c = s?.content ?? {};
+          interface RawSlide { type?: string; content?: Record<string, unknown> }
+          interface NormalizedSlide { type: string; content: Record<string, unknown> }
+          const norm = (s: RawSlide): NormalizedSlide => {
+            let t = s?.type as string | undefined;
+            const c = (s?.content ?? {}) as Record<string, unknown>;
             const lower = typeof t === 'string' ? t.toLowerCase() : '';
-            if (!allowedTypes.has(t)) {
+            if (!t || !allowedTypes.has(t)) {
               if (lower.includes('title')) t = 'Header & Subheader Slide';
               else if (lower.includes('content') || lower.includes('text') || lower.includes('paragraph')) t = 'Paragraph Slide';
               else if (lower.includes('image')) t = 'Header & Subheader Slide';
@@ -328,24 +355,24 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
               return { type: t, content: { title: c.title ?? 'Presentation', subtitle: c.subtitle ?? 'Generated slide' } };
             }
             if (t === 'Enumeration Slide') {
-              const bullets = Array.isArray(c.bullets) && c.bullets.length >= 3 ? c.bullets.slice(0, 5) : ['Point 1', 'Point 2', 'Point 3'];
-              return { type: t, content: { title: c.title ?? 'Overview', bullets } };
+              const bullets = Array.isArray(c.bullets) && c.bullets.length >= 3 ? (c.bullets as string[]).slice(0, 5) : ['Point 1', 'Point 2', 'Point 3'];
+              return { type: t, content: { title: (c.title as string) ?? 'Overview', bullets } };
             }
             if (t === 'Definition Slide') {
-              return { type: t, content: { term: c.term ?? 'Term', definition: c.definition ?? 'Definition goes here.' } };
+              return { type: t, content: { term: (c.term as string) ?? 'Term', definition: (c.definition as string) ?? 'Definition goes here.' } };
             }
             if (t === 'Comparison Slide') {
-              const items = Array.isArray(c.comparisonItems) && c.comparisonItems.length >= 2 ? c.comparisonItems.slice(0, 3) : [
+              const items = Array.isArray(c.comparisonItems) && c.comparisonItems.length >= 2 ? (c.comparisonItems as unknown[]).slice(0, 3) : [
                 { header: 'A', points: ['Point'] },
                 { header: 'B', points: ['Point'] }
               ];
-              return { type: t, content: { title: c.title ?? 'Comparison', comparisonItems: items } };
+              return { type: t, content: { title: (c.title as string) ?? 'Comparison', comparisonItems: items } };
             }
             // Paragraph default
-            return { type: 'Paragraph Slide', content: { paragraph: c.paragraph ?? 'Summary goes here.' } };
+            return { type: 'Paragraph Slide', content: { paragraph: (c.paragraph as string) ?? 'Summary goes here.' } };
           };
 
-          functionArgs = { ...functionArgs, slides: functionArgs.slides.map(norm) };
+          functionArgs = { ...functionArgs, slides: Array.isArray((functionArgs as Record<string, unknown>)?.slides) ? ((functionArgs as Record<string, unknown>).slides as RawSlide[]).map(norm) : [] };
         }
         return {
           content: JSON.stringify(functionArgs),
@@ -353,12 +380,9 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
         };
       }
     }
-    
     // Regular text response
     const textContent = content?.parts?.[0]?.text || '';
-    return {
-      content: textContent
-    };
+    return { content: textContent };
     
   } catch (error) {
     console.error('Error in getGeminiResponse:', error);
