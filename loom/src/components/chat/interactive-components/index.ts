@@ -1,5 +1,5 @@
 // Re-export components to provide stable import paths and avoid case sensitivity issues in CI/CD
-export { default as Flashcards } from './Flashcards';
+export { default as Flashcards } from './flashcards';
 export { default as PptSlides } from './PptSlides';
 export { default as Quiz } from './quiz';
 export { default as ImageUploader } from './ImageUploader';
