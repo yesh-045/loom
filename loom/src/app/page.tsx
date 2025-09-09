@@ -54,7 +54,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
               <video
                 ref={videoRef}
-                src="/videos/hero-video.mp4"
+                src="/videos/mock.mp4"
                 className="object-cover w-full h-full aspect-[16/9]"
                 onEnded={handleVideoEnd}
                 autoPlay
@@ -161,45 +161,122 @@ export default function Home() {
       </section>
 
       {/* Feature spotlight (alternating) */}
-      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-14">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="order-2 lg:order-1">
-            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Interactive study components</h3>
-            <p className="mt-3 text-muted-foreground">Generate presentations, flashcards, and quizzes tuned to your prompt.</p>
-            <ul className="mt-4 space-y-2 text-sm leading-relaxed">
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Auto-structured slides and bullet points</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Flashcards with spaced practice</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Quizzes with instant feedback</li>
-            </ul>
+      <section className="relative px-6 md:px-10 lg:px-16 xl:px-24 py-24 bg-background">
+  <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    
+    {/* Text Content */}
+    <div className="order-2 lg:order-1">
+      <h2 className="font-heading text-4xl sm:text-5xl font-bold leading-tight">
+        Interactive study components
+      </h2>
+      <p className="mt-6 text-lg text-muted-foreground max-w-lg">
+        Replace passive study with active engagement. Generate presentations, flashcards, and quizzes tailored to your exact prompts — all powered by AI.
+      </p>
+      <ul className="mt-8 space-y-4 text-base leading-relaxed">
+        <li className="flex items-start gap-3">
+          <Check className="mt-1 h-5 w-5 text-melon-500 shrink-0" />
+          <span>Auto-structured slides and bullet points that save hours of preparation</span>
+        </li>
+        <li className="flex items-start gap-3">
+          <Check className="mt-1 h-5 w-5 text-melon-500 shrink-0" />
+          <span>Flashcards with spaced practice to improve retention</span>
+        </li>
+        <li className="flex items-start gap-3">
+          <Check className="mt-1 h-5 w-5 text-melon-500 shrink-0" />
+          <span>Quizzes with instant feedback to track progress in real time</span>
+        </li>
+      </ul>
+      <div className="mt-10 flex gap-4">
+        <button
+          onClick={() => router.push("/chat")}
+          className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-8 py-3 font-semibold shadow-lg"
+        >
+          Try it now
+        </button>
+        <a
+          href="#product"
+          className="rounded-full border border-border bg-card hover:bg-accent/20 px-8 py-3 font-semibold"
+        >
+          Learn more
+        </a>
+      </div>
+    </div>
+
+    {/* Video Grid */}
+    <div className="order-1 lg:order-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+          <div className="aspect-[4/3]">
+            <video
+              src="/videos/flashcards.mp4"
+              className="object-cover w-full h-full"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
           </div>
-          <div className="order-1 lg:order-2">
-            <div className="relative rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
-              <div className="aspect-[16/9]">
-                <video src="/videos/basic-features.mp4" className="object-cover w-full h-full" autoPlay muted loop playsInline preload="metadata" />
-              </div>
-            </div>
+          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+            Flashcards
           </div>
         </div>
-      </section>
+        <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+          <div className="aspect-[4/3]">
+            <video
+              src="/videos/ppt.mp4"
+              className="object-cover w-full h-full"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </div>
+          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+            Presentations
+          </div>
+        </div>
+        <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl sm:col-span-2">
+          <div className="aspect-[16/9]">
+            <video
+              src="/videos/quiz.mp4"
+              className="object-cover w-full h-full"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </div>
+          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+            Quizzes
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-14">
         <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
             <div className="relative rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
               <div className="aspect-[16/9]">
-                <video src="/videos/draw-feature.mp4" className="object-cover w-full h-full" autoPlay muted loop playsInline preload="metadata" />
+                <video src="/videos/phy_sim.mp4" className="object-cover w-full h-full" autoPlay muted loop playsInline preload="metadata" />
               </div>
             </div>
           </div>
-          <div>
-            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Advanced AI canvas</h3>
-            <p className="mt-3 text-muted-foreground">Sketch, annotate, and explore complex problems. Let AI explain step-by-step.</p>
+            <div>
+            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Physics simulations</h3>
+            <p className="mt-3 text-muted-foreground">Visualize and interact with physics concepts through dynamic simulations.</p>
             <ul className="mt-4 space-y-2 text-sm leading-relaxed">
-              <li className="flex items-start gap-2"><PenTool className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Freehand drawing and annotations</li>
-              <li className="flex items-start gap-2"><BookOpen className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Explanations tailored to your sketch</li>
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Export snippets into slides or cards</li>
+              <li className="flex items-start gap-2"><Sparkles className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Real-time interactive models</li>
+              <li className="flex items-start gap-2"><BookOpen className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Step-by-step explanations</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" /> Customize parameters and observe</li>
             </ul>
-          </div>
+            </div>
         </div>
       </section>
 
@@ -210,23 +287,27 @@ export default function Home() {
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Tile 1 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-                <video src="/videos/draw-feature.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
-                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">AI Canvas</div>
+              <img src="/board.png" className="absolute inset-0 w-full h-full object-contain" alt="Interactive Board" />
+              <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Interactive Board</div>
               </div>
               {/* Tile 2 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-                <video src="/videos/basic-features.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
-                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Study components</div>
+              <img src="/st.png" className="absolute inset-0 w-full h-full object-contain" alt="Speech Training" />
+              <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Speech Training</div>
               </div>
-              {/* Tile 3 */}
-              <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
-                <video src="/videos/physics-feature.mp4" className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline preload="metadata" />
-                <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Physics simulator</div>
-              </div>
-            </div>
+              
+          {/* Tile 3 */}
+          <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
+          <img src="/spelltest.png" className="absolute inset-0 w-full h-full object-contain" alt="Spell Test" />
+          <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Spell Test</div>
           </div>
-        </section>
       
+        </div>
+      </div>
+      </section>
+
     </div>
+
   )
+
 }
