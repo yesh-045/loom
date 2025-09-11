@@ -3,6 +3,9 @@ import { uploadFile } from '@/utils/cloudinaryStorage';
 import sharp from 'sharp';
 import crypto from 'crypto';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');

@@ -1,112 +1,130 @@
 
 
-<h1 align='center'>loom</h1>
-
 <p align='center'>
-<strong>loom</strong> is an AI-powered educational platform that enhances learning through interactivity. It generates custom flashcards, quizzes, physics simulations, and math problem visualizations, providing an engaging, real-time learning experience.
-<br><br>
-
+	<img src="public/logo.png" alt="Loomyn logo" width="120" />
+</p>
+<h1 align='center'>Loomyn</h1>
 <p align='center'>
-<i>Created by: Loomyn</i>
-<br>
+	<em>Redefining learning through AI-driven interactivity.</em>
+</p>
 
-## Features
-🧠 <strong>Powerpoints, Flashcards, and Quizzes!</strong><br>
-Turn facts into fun! Simply make a request in order reinforce your knowledge!
-<video src="https://github.com/user-attachments/assets/14a8390f-2a50-4362-a6b4-716fcd649d61" controls="controls" style="max-width: 730px;">
-</video>
+Loomyn is an AI-powered study workspace that turns static content into interactive learning: generate flashcards, build quizzes and slides, sketch on an AI canvas, run physics simulations, and practice speech — all from your own inputs like URLs, PDFs, or images.
 
-🔤 <strong>Spelling Challenges</strong><br>
-Hone your spelling skills with any topic you want!
-<video src="https://github.com/user-attachments/assets/c9a08cff-7753-458d-a058-17d1ee714321" controls="controls" style="max-width: 730px;">
-</video>
+## The problem Loomyn solves
 
-🎨 <strong>Drawing board on a canvas</strong><br>
-Visualize ideas or physics problems on a canvas!
+Education still leans on static, one-size-fits-all materials. Learners routinely face:
 
-🎤 <strong>Speech-to-Text & Text-to-Speech</strong><br>
-Practice pronunciation, engage in conversations, and get audio responses powered by ElevenLabs!
+- Low engagement and poor retention from text-only study
+- Limited personalization; scarce adaptive feedback
+- Difficulty visualizing abstract concepts in science and math
+- Minimal access to real‑time feedback in language practice
 
-🗣️ <strong>Voice Training & Custom Voices</strong><br>
-Create custom voice clones and practice speaking with personalized feedback!
+Evidence underscores the gap:
 
-🎯 <strong>Speech Practice Exercises</strong><br>
-Improve your speaking skills with pronunciation, conversation, and reading practice exercises!
-<video src="https://github.com/user-attachments/assets/6b34a8ec-166e-459c-845b-e41303a50b91" controls="controls" style="max-width: 730px;">
-</video>
+- Studies show interactive methods significantly outperform text-only study for retention (e.g., Lyra et al., IEEE)
+- The global digital learning market is projected to grow from $332.6B (2022) to $973.4B by 2030 (CAGR ~14%, Zion Market Research)
 
-⚙️ <strong>Physics-based simulations</strong><br>
-Experience science in action, watch the laws of physics come to life!
-<video src="https://github.com/user-attachments/assets/42030fc3-e23b-45e9-9938-a642b3fcf5d4" controls="controls" style="max-width: 730px;">
-</video>
+## Our solution: Loomyn
 
+Loomyn transforms AI-powered education into an interactive, adaptive platform. It enables:
 
-## Getting Started
+- Tailored flashcards, quizzes, and slides from the learner’s own material
+- An AI canvas to sketch problems with step‑by‑step explanation
+- A physics simulator for hands-on experimentation with scientific concepts
+- Speech and voice tools for pronunciation, listening, and speaking
+- Spelling and language challenges for gamified skill‑building
 
-This guide is for developers looking to set up loom on their local machine. Please follow the steps below carefully.
+This shifts learning from passive consumption to active, personalized experience. By merging personalization, interactivity, and AI-driven adaptability, Loomyn bridges the gap between traditional education and modern learners’ needs — enabling deeper understanding, stronger retention, and a more empowering study journey.
 
-### 1. Install Dependencies
+## Product tour (core features)
 
-Make sure you are in the root folder, then run the following command to install all necessary dependencies:
+- Import anything: paste a YouTube or web URL, upload a PDF, or send an image — get a study kit with summary, keynotes, slides, and flashcards; PDFs also generate quizzes
+- AI Chat: conversational study with tool-calling for slides, quizzes, flashcards, canvas, physics, and TTS
+- AI Canvas: draw or sketch concepts; get generated step-by-step visual explanations
+- Physics Simulator: explore motion, gravity, waves, and collisions with real-time parameters
+- Speech & TTS: practice pronunciation and listening; convert text to natural speech
+- Spelling Practice: gamified spelling challenges
 
-```bash
+## [Try here](https://loom-vert.vercel.app)
+
+## High-level design
+
+```
+Next.js (App Router, TypeScript, Tailwind)
+ ├─ UI: Chat, MenuBar, History, interactive components (canvas, physics, speech)
+ ├─ API routes: /api/generate-ai-response, /api/ingest, /api/image, /api/chat, /api/messages, /api/text-to-speech
+ ├─ AI: Gemini (function-calling style) with fallback to AIML; inline image bytes;
+ ├─ Parsing: youtube-transcript + cheerio for URLs; pdfjs-dist (legacy build) for PDFs
+ └─ Data: Prisma + MongoDB for chats/messages
+```
+
+## Architecture details
+
+- App Router with server actions and API routes using Node runtime
+- Function-calling abstraction that maps AI calls to components: slides, quiz, flashcards, spelling, canvas, physics, TTS
+- Image handling via secure upload + signed URLs; embedded as inline bytes for model analysis
+- Ingest service builds study kits with heuristic fallbacks and upgrades quality via Gemini
+- Persistence: Chats and messages saved immediately, including items created from the + menu
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB connection string
+- API keys as needed
+
+### Environment variables (.env.local)
+
+```
+DATABASE_URL=mongodb+srv://...
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret
+GEMINI_API_KEY=your-gemini-key
+# Optional for image storage
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+
+### Install & run
+
+```powershell
+# from project root
 npm install
-```
-
-### 2. Setup Environment Variables
-
-After installing the dependencies, create a `.env` file in the root directory (at the same level as `README.md` and `package.json`). You can copy the `.env.example` file and populate it with your actual values:
-
-```bash
-cp .env.example .env
-```
-
-Then populate the `.env` file with the following values:
-
-```bash
-AIML_API_KEY=your_aiml_api_key
-GEMINI_API_KEY=your_gemini_api_key
-ELEVENLABS_API_KEY=your_elevenlabs_api_key
-DATABASE_URL=your_mongodb_atlas_connection_string
-
-# Cloudinary for file storage
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
-```
-
-### 3. Database Setup
-
-To push the schema into your MongoDB cluster, run:
-
-```bash
-npx prisma db push
-```
-
-It is recommended to use MongoDB Atlas for hosting your clusters. Check out the official [MongoDB Atlas](https://www.mongodb.com/docs/atlas/) documentation for more info.
-
-### 4. API Endpoints
-
-The application includes several API endpoints for different functionalities:
-
-#### Speech & Audio APIs
-- `/api/text-to-speech` - Convert text to speech using ElevenLabs
-- `/api/speech-response` - Generate AI response and convert to speech
-- `/api/speech-practice` - Analyze speech practice and provide feedback
-- `/api/voice-training` - Create custom voice clones and manage voices
-
-#### AI & Content APIs
-- `/api/generate-ai-response` - Generate AI responses using Gemini
-- `/api/image` - Upload and manage images via Cloudinary
-
-#### Authentication
-- Simple stub authentication - no real authentication required, just click to enter the app
-
-### 4. Start Development Server
-
-After installing dependencies and setting up the database, run the following command in the root directory to start the development server:
-
-```bash
+npx prisma generate
 npm run dev
 ```
+
+Open http://localhost:3000
+
+## Usage highlights
+
+- Use the + button in chat to import a URL/PDF/image
+- URL ingest: summary, keynotes, slides, flashcards; gracefully handles no-captions YouTube
+- PDF ingest: parses text server-side via pdfjs-dist and adds a quiz
+- Images: securely uploaded, then analyzed directly by AI without detours
+
+
+
+
+
+## Impact & vision
+
+- Deeper understanding and stronger retention via hands-on exploration
+- Teachers can scale personalized, interactive content with minimal prep
+- Roadmap: collaborative study sessions, multiplayer quizzes, richer simulations
+
+## Contributing
+
+- Fork and open a PR with a clear description
+- Run lint and type checks locally before submitting
+
+```powershell
+npm run lint
+npm run build
+```
+
+## License
+
+MIT

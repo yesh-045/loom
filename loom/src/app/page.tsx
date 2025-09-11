@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar"
 import Image from "next/image"
 import { FlipWords } from "@/components/ui/flip-words"
 import { useRef } from "react"
-import { Check, PenTool, BookOpen, Sparkles } from "lucide-react"
+import { Check, PenTool, BookOpen, Sparkles, FileText, Image as ImageIcon, Link as LinkIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 export default function Home() {
   const words = ["Enhanced Learning", "Better Learning", "Engaged Learning", "Easier Learning"]
@@ -63,13 +63,15 @@ export default function Home() {
                 playsInline
                 preload="metadata"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Live demo preview</span>
+              <div className="absolute bottom-3 left-3">
+                <span className="inline-block rounded-full bg-melon-400 text-white px-3 py-1 text-xs shadow">Live demo preview</span>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      
 
       {/* Social proof */}
       <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-6">
@@ -218,7 +220,7 @@ export default function Home() {
               preload="metadata"
             />
           </div>
-          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+          <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
             Flashcards
           </div>
         </div>
@@ -234,7 +236,7 @@ export default function Home() {
               preload="metadata"
             />
           </div>
-          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+          <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
             Presentations
           </div>
         </div>
@@ -250,7 +252,7 @@ export default function Home() {
               preload="metadata"
             />
           </div>
-          <div className="absolute bottom-3 left-3 bg-background/80 backdrop-blur px-3 py-1 text-xs rounded-full border border-border">
+          <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
             Quizzes
           </div>
         </div>
@@ -281,6 +283,72 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Import sources: YouTube, PDF, Images (single video + content) */}
+      <section className="px-6 md:px-10 lg:px-16 xl:px-24 py-16">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          {/* Text content */}
+          <div>
+            <h3 className="font-heading text-3xl sm:text-4xl font-semibold">Import Sources:<br /> YouTube • PDF • Images</h3>
+            <p className="mt-3 text-muted-foreground">Use the + button in chat to paste a link or upload files. We extract the essentials and generate study-ready materials.</p>
+            <ul className="mt-6 space-y-4 text-sm leading-relaxed">
+              <li className="flex items-start gap-3">
+                <LinkIcon className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" />
+                <div>
+                  <div className="font-medium">YouTube links</div>
+                  <div className="text-muted-foreground">Pulls captions when available; uses page details. Produces summary, keynotes, slides, and flashcards.</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <FileText className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" />
+                <div>
+                  <div className="font-medium">PDF uploads</div>
+                  <div className="text-muted-foreground">Parses text server-side. Generates summary, keynotes, slides, flashcards — and a quiz for PDFs.</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <ImageIcon className="mt-0.5 h-4 w-4 text-melon-500 shrink-0" />
+                <div>
+                  <div className="font-medium">Image analysis</div>
+                  <div className="text-muted-foreground">Uploads images securely and returns a direct AI interpretation — no tool detours.</div>
+                </div>
+              </li>
+            </ul>
+            <div className="mt-8 flex gap-3">
+              <button onClick={() => router.push('/chat')} className="rounded-full bg-primary text-primary-foreground hover:bg-accent px-6 py-3 text-sm font-semibold">Try in chat</button>
+            </div>
+          </div>
+              <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+                <div className="aspect-[4/3]">
+                  <Image src="/ingest1.png" fill className="object-contain" alt="Import demo 1" />
+                </div>
+                <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
+                  Import demo
+                </div>
+                </div>
+                <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl">
+                <div className="aspect-[4/3]">
+                  <Image src="/ingest3.png" fill className="object-contain" alt="Import demo 2" />
+                </div>
+                <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
+                  Image Ingest demo
+                </div>
+                </div>
+                <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-xl sm:col-span-2">
+                <div className="aspect-[16/9]">
+                  <Image src="/ingest2.png" fill className="object-contain" alt="Import demo 3" />
+                </div>
+                <div className="absolute bottom-3 left-3 bg-melon-400 text-white px-3 py-1 text-xs rounded-full shadow">
+                  Youtube Url demo
+                </div>
+                </div>
+              </div>
+              
+          </div>
+        </div>
+      </section>
+
       
         <section id="showcase" className="px-6 md:px-10 lg:px-16 xl:px-24 py-16">
           <div className="mx-auto max-w-7xl">
@@ -289,18 +357,18 @@ export default function Home() {
               {/* Tile 1 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
               <Image src="/board.png" fill priority className="object-contain" alt="Interactive Board" />
-              <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Interactive Board</div>
+              <div className="absolute bottom-3 left-3 rounded-full bg-melon-400 text-white px-3 py-1 text-xs shadow">Interactive Board</div>
               </div>
               {/* Tile 2 */}
               <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
               <Image src="/st.png" fill className="object-contain" alt="Speech Training" />
-              <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Speech Training</div>
+              <div className="absolute bottom-3 left-3 rounded-full bg-melon-400 text-white px-3 py-1 text-xs shadow">Speech Training</div>
               </div>
               
           {/* Tile 3 */}
           <div className="relative rounded-3xl border border-border bg-card overflow-hidden shadow-lg aspect-[16/9]">
           <Image src="/spelltest.png" fill className="object-contain" alt="Spell Test" />
-          <div className="absolute bottom-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 text-xs border border-border">Spell Test</div>
+          <div className="absolute bottom-3 left-3 rounded-full bg-melon-400 text-white px-3 py-1 text-xs shadow">Spell Test</div>
           </div>
       
         </div>

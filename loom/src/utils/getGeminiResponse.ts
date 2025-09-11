@@ -7,6 +7,7 @@ interface GeminiFunctionCallPart {
     args?: Record<string, unknown>;
   };
   text?: string;
+  inline_data?: { mimeType: string; data: string };
 }
 
 interface GeminiContent {
@@ -21,24 +22,91 @@ interface GeminiAPIResponse {
   candidates?: GeminiCandidate[];
 }
 
-// Convert messages to Gemini API format
-function convertMessagesToGeminiFormat(messages: ChatMessage[]) {
-  return messages.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{
-      text: typeof msg.content === 'string'
-        ? msg.content
-        : Array.isArray(msg.content)
-          ? msg.content.map(partRaw => {
-              if (typeof partRaw !== 'object' || partRaw === null) return '';
-              const p = partRaw as { type?: string; text?: string; imageUrl?: string };
-              if (p.type === 'text') return p.text || '';
-              if (p.type === 'image') return `[Image: ${p.imageUrl || 'unknown'}]`;
-              return '';
-            }).join(' ')
-          : String(msg.content)
-    }]
-  }));
+// Convert messages to Gemini API format, embedding images as inline_data
+async function convertMessagesToGeminiFormat(messages: ChatMessage[]) {
+  const convertOne = async (msg: ChatMessage) => {
+    const parts: GeminiFunctionCallPart[] = [];
+
+    if (typeof msg.content === 'string') {
+      parts.push({ text: msg.content });
+    } else if (Array.isArray(msg.content)) {
+      for (const raw of msg.content as Array<Record<string, unknown>>) {
+        if (!raw || typeof raw !== 'object') continue;
+        // OpenAI-style text part
+        if (raw.type === 'text' && typeof raw.text === 'string') {
+          parts.push({ text: raw.text });
+          continue;
+        }
+        // OpenAI-style image_url part
+        if (raw.type === 'image_url' && raw.image_url && typeof (raw.image_url as { url?: unknown }).url === 'string') {
+          const url: string = (raw.image_url as { url: string }).url;
+          try {
+            const res = await fetch(url);
+            const ct = res.headers.get('content-type') || '';
+            const mime = selectSupportedImageMimeType(ct, url);
+            const buf = await res.arrayBuffer();
+            const b64 = Buffer.from(buf).toString('base64');
+            parts.push({ inline_data: { mimeType: mime, data: b64 } });
+          } catch {
+            // Fallback: include as text reference if fetch fails
+            parts.push({ text: `Image to analyze: ${url}` });
+          }
+          continue;
+        }
+        // Legacy custom 'image' with imageUrl
+        if (raw.type === 'image' && typeof (raw as { imageUrl?: unknown }).imageUrl === 'string') {
+          const url: string = (raw as { imageUrl: string }).imageUrl;
+          try {
+            const res = await fetch(url);
+            const ct = res.headers.get('content-type') || '';
+            const mime = selectSupportedImageMimeType(ct, url);
+            const buf = await res.arrayBuffer();
+            const b64 = Buffer.from(buf).toString('base64');
+            parts.push({ inline_data: { mimeType: mime, data: b64 } });
+          } catch {
+            parts.push({ text: `Image to analyze: ${url}` });
+          }
+        }
+      }
+    } else {
+      parts.push({ text: String(msg.content) });
+    }
+
+    return {
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts
+    };
+  };
+
+  const out = [] as Array<{ role: string; parts: GeminiFunctionCallPart[] }>;
+  for (const m of messages) {
+    out.push(await convertOne(m));
+  }
+  // Ensure each message has at least one text part to avoid empty content
+  for (const m of out) {
+    if (!m.parts || m.parts.length === 0) m.parts = [{ text: '' }];
+  }
+  return out;
+}
+
+function guessMimeTypeFromUrl(url: string): string {
+  const lower = url.split('?')[0].toLowerCase();
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  if (lower.endsWith('.gif')) return 'image/gif';
+  return 'application/octet-stream';
+}
+
+function selectSupportedImageMimeType(contentTypeHeader: string, url: string): string {
+  const supported = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+  const header = (contentTypeHeader || '').toLowerCase().split(';')[0].trim();
+  if (header && supported.has(header)) return header;
+  const guessed = guessMimeTypeFromUrl(url);
+  if (supported.has(guessed)) return guessed;
+  // Cloudinary image URLs may have no extension; default to jpeg
+  if (url.includes('/image/upload')) return 'image/jpeg';
+  return 'image/jpeg';
 }
 
 export async function getGeminiResponse(messages: ChatMessage[], model: string = 'gemini-2.0-flash'): Promise<AIResponse> {
@@ -49,7 +117,7 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
   }
 
   try {
-    const geminiMessages = convertMessagesToGeminiFormat(messages);
+    const geminiMessages = await convertMessagesToGeminiFormat(messages);
 
     const lastUserMessage = [...messages].reverse().find(m => m.role === 'user');
     const lastUserText = (typeof lastUserMessage?.content === 'string' ? lastUserMessage?.content : '').toLowerCase();
@@ -58,22 +126,33 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
     const wantsFlashcards = /\b(flashcard|flash cards|cards)\b/.test(lastUserText);
     const wantsSpelling = /\b(spell|spelling)\b/.test(lastUserText);
     const wantsCanvas = /\b(draw|canvas|sketch)\b/.test(lastUserText);
-    const wantsImage = /\b(image|upload|picture|photo)\b/.test(lastUserText);
+  // const wantsImage = /\b(image|upload|picture|photo)\b/.test(lastUserText);
     const wantsPhysics = /\b(physics|simulate|simulation|objects|velocity|weight|position)\b/.test(lastUserText);
     const wantsTTS = /\b(tts|voice|speak|narration|read aloud|text to speech)\b/.test(lastUserText);
 
   const allFunctionNames = functionCallingTools.map(t => t.function.name);
   let allowedFunctionNames = allFunctionNames;
+  // If the conversation includes an image payload, prefer direct analysis text over opening an image component.
+  const hasImagePayload = messages.some(m => Array.isArray(m.content) && (m.content as Array<Record<string, unknown>>).some(p => p && typeof p === 'object' && (p.type === 'image' || p.type === 'image_url')));
   if (wantsSlides) allowedFunctionNames = ['create_ppt_slides'];
   else if (wantsQuiz) allowedFunctionNames = ['create_quiz'];
   else if (wantsFlashcards) allowedFunctionNames = ['create_flashcards'];
   else if (wantsSpelling) allowedFunctionNames = ['create_spelling_quiz'];
   else if (wantsCanvas) allowedFunctionNames = ['draw_canvas'];
-  else if (wantsImage) allowedFunctionNames = ['image_upload'];
   else if (wantsPhysics) allowedFunctionNames = ['run_physics_simulation'];
   else if (wantsTTS) allowedFunctionNames = ['generate_text_to_speech'];
 
+  // Never allow image_upload tool when we already have an image to analyze.
+  if (hasImagePayload) {
+    allowedFunctionNames = allowedFunctionNames.filter(n => n !== 'image_upload');
+    // Avoid drawing unless explicitly asked when analyzing images
+    if (!wantsCanvas) {
+      allowedFunctionNames = allowedFunctionNames.filter(n => n !== 'draw_canvas');
+    }
+  }
+
   const restrictFunctions = allowedFunctionNames.length !== allFunctionNames.length;
+  const forceNoTools = hasImagePayload && !(wantsSlides || wantsQuiz || wantsFlashcards || wantsSpelling || wantsCanvas || wantsPhysics || wantsTTS);
 
     const systemInstruction = (
       "You are a function-calling assistant. Prefer calling a tool instead of replying with plain text when a matching tool exists.\n\n" +
@@ -287,9 +366,11 @@ export async function getGeminiResponse(messages: ChatMessage[], model: string =
           }))
         }],
         tool_config: {
-          function_calling_config: restrictFunctions
-            ? { mode: "ANY", allowed_function_names: allowedFunctionNames }
-            : { mode: "AUTO" }
+          function_calling_config: forceNoTools
+            ? { mode: "NONE" }
+            : (restrictFunctions
+                ? { mode: "ANY", allowed_function_names: allowedFunctionNames }
+                : { mode: "AUTO" })
         }
       }),
     });

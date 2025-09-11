@@ -12,6 +12,7 @@ import AIChatMessages from './AIChatMessages'
 import fetchGenerateAIResponse from '@/utils/fetchGenerateAIResponse'
 import createChat from '@/utils/createChat'
 import submitMessage from '@/utils/submitMessage'
+import AddMenu from './AddMenu'
 
 export default function AIChat({ initialMessages, userId, chatId }: { initialMessages?: ChatMessage[], userId: string, chatId?: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -188,9 +189,11 @@ export default function AIChat({ initialMessages, userId, chatId }: { initialMes
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 bg-secondary border border-border rounded-2xl">
+  <form onSubmit={handleSubmit} className="p-4 bg-secondary border border-border rounded-2xl">
         <div className="flex flex-col space-y-2">
           <div className="flex space-x-2">
+    {/* Add (+) hover menu for importing URL/PDF/Image */}
+    <AddMenu userId={userId} chatId={chatId} messages={messages} setMessages={setMessages} />
             <Textarea
               ref={textareaRef}
               value={input}

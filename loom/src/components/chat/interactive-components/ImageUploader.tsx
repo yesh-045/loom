@@ -3,22 +3,24 @@ import React, { useState, ChangeEvent } from 'react';
 import saveImage from '@/utils/saveImage';
 import { ChatMessage } from '@/lib/types';
 import { Button } from "@/components/ui/button";
+import fetchGenerateAIResponse from '@/utils/fetchGenerateAIResponse';
 
 interface ImageUploaderProps {
   messages: ChatMessage[];
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({ messages, setMessages }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<string | null>(null);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      console.log(e.target.files[0]);
-      setFile(e.target.files[0]);
+  const handleFileChange = (_e: ChangeEvent<HTMLInputElement>) => {
+    if (_e.target.files) {
+      console.log(_e.target.files[0]);
+      setFile(_e.target.files[0]);
     }
   };
 
@@ -45,11 +47,33 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
         ]
       };
 
+      // Append image and a lightweight instruction so AI knows to interpret
+      const instruction: ChatMessage = {
+        role: 'user',
+        content: 'Please describe and interpret the uploaded image in detail.'
+      };
+
+      const newConversation = [...messages, message, instruction];
       setIsSuccessful(true);
-      setMessages(prev => [...prev, message]);
+      setMessages(newConversation);
       setUploadResult('Image uploaded successfully! URL: ' + imageUrl);
-    } catch (error) {
-      console.log(error);
+
+      // Auto-call AI to interpret
+      setAnalyzing(true);
+      try {
+        const ai = await fetchGenerateAIResponse(newConversation);
+        const aiMessage: ChatMessage = ai.contentType
+          ? { role: 'assistant', content: ai.content, componentMessageType: ai.contentType as ChatMessage['componentMessageType'] }
+          : { role: 'assistant', content: ai.content };
+        setMessages(prev => [...prev, aiMessage]);
+      } catch {
+        // Surface a simple assistant error message in the chat
+        setMessages(prev => [...prev, { role: 'assistant', content: 'I could not analyze the image right now. Please try again.' }]);
+      } finally {
+        setAnalyzing(false);
+      }
+    } catch {
+      // Swallow error and show generic message
       setUploadResult('An error occurred during upload.');
     } finally {
       setUploading(false);
@@ -82,6 +106,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ setMessages }) => {
           >
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>
+        )}
+        {isSuccessful && (
+          <div className="text-sm text-muted-foreground text-center">
+            {analyzing ? 'Analyzing image with AI…' : 'Image uploaded.'}
+          </div>
         )}
       </form>
       {uploadResult && (
